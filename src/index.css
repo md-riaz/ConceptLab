@@ -3,10 +3,188 @@
 @tailwind utilities;
 
 :root {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  /* Base palette */
+  --color-gray-50: #f8fafc;
+  --color-gray-100: #edf2f7;
+  --color-gray-200: #e2e8f0;
+  --color-gray-300: #cbd5e0;
+  --color-gray-700: #2d3748;
+  --color-gray-900: #171923;
+
+  --color-primary-500: #6366f1;
+  --color-primary-600: #4f46e5;
+  --color-primary-100: #e0e7ff;
+
+  --color-purple-500: #a855f7;
+  --color-purple-100: #f3e8ff;
+
+  --color-orange-500: #f97316;
+  --color-orange-100: #ffedd5;
+
+  --color-green-500: #22c55e;
+  --color-red-500: #ef4444;
+  --color-yellow-500: #eab308;
+
+  /* Semantic UI colors */
+  --color-bg-app: var(--color-gray-50);
+  --color-bg-surface: #ffffff;
+  --color-bg-elevated: #ffffff;
+  --color-border-subtle: var(--color-gray-200);
+  --color-border-strong: var(--color-gray-300);
+  --color-text-primary: var(--color-gray-900);
+  --color-text-secondary: var(--color-gray-700);
+  --color-text-muted: var(--color-gray-300);
+  --color-text-on-primary: #ffffff;
+  --color-accent-primary: var(--color-primary-500);
+  --color-accent-secondary: var(--color-purple-500);
+  --color-bg-chip: var(--color-primary-100);
+  --color-bg-code: #0f172a;
+  --color-bg-pill: var(--color-purple-100);
+
+  /* Visualization semantic tokens */
+  --viz-bar-default: var(--color-gray-200);
+  --viz-bar-current: var(--color-orange-500);
+  --viz-bar-comparison: var(--color-purple-500);
+  --viz-bar-final: var(--color-green-500);
+
+  --viz-node-unvisited: var(--color-gray-200);
+  --viz-node-current: var(--color-orange-500);
+  --viz-node-visited: var(--color-purple-500);
+  --viz-node-finished: var(--color-green-500);
+
+  --viz-edge-default: var(--color-gray-300);
+  --viz-edge-path: var(--color-primary-500);
+
+  /* Typography */
+  --font-family-base: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-family-mono: 'JetBrains Mono', 'Fira Code', Consolas, Monaco, 'Courier New', monospace;
+
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  /* Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 10px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 10px 30px rgba(15, 23, 42, 0.18);
+  --focus-ring: 0 0 0 3px rgba(99, 102, 241, 0.5);
+}
+
+/* Dark theme */
+[data-theme="dark"] {
+  --color-bg-app: #020617;
+  --color-bg-surface: #0f172a;
+  --color-bg-elevated: #1e293b;
+  --color-text-primary: #e5e7eb;
+  --color-text-secondary: #9ca3af;
+  --color-text-muted: #4b5563;
+  --color-border-subtle: #1e293b;
+  --color-border-strong: #334155;
+  --color-bg-code: #020617;
+
+  /* More saturated visualization colors in dark mode */
+  --viz-bar-default: #334155;
+  --viz-bar-current: #fb923c;
+  --viz-bar-comparison: #c084fc;
+  --viz-bar-final: #4ade80;
+
+  --viz-node-unvisited: #334155;
+  --viz-node-current: #fb923c;
+  --viz-node-visited: #c084fc;
+  --viz-node-finished: #4ade80;
+
+  --viz-edge-default: #475569;
+  --viz-edge-path: #818cf8;
+}
+
+/* High contrast theme */
+[data-theme="high-contrast"] {
+  --color-bg-app: #000000;
+  --color-bg-surface: #ffffff;
+  --color-bg-elevated: #ffffff;
+  --color-text-primary: #000000;
+  --color-text-secondary: #000000;
+  --color-text-muted: #666666;
+  --color-border-subtle: #000000;
+  --color-border-strong: #000000;
+
+  --viz-bar-default: #cccccc;
+  --viz-bar-current: #ff6600;
+  --viz-bar-comparison: #9933ff;
+  --viz-bar-final: #00cc00;
+
+  --viz-node-unvisited: #cccccc;
+  --viz-node-current: #ff6600;
+  --viz-node-visited: #9933ff;
+  --viz-node-finished: #00cc00;
+
+  --viz-edge-default: #666666;
+  --viz-edge-path: #0000ff;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
+  font-family: var(--font-family-base);
+  background-color: var(--color-bg-app);
+  color: var(--color-text-primary);
+}
+
+/* Typography utility classes */
+@layer utilities {
+  .h1 {
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+  
+  .h2 {
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+  
+  .h3 {
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+  
+  .h4 {
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+  
+  .body {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  
+  .body-sm {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  
+  .caption {
+    font-size: 12px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  
+  .code {
+    font-family: var(--font-family-mono);
+    font-size: 14px;
+  }
 }

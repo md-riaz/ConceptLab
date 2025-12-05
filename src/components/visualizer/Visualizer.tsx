@@ -118,27 +118,48 @@ export default function Visualizer() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
+      <div style={{ marginBottom: 'var(--space-8)' }}>
+        <h1 className="h1" style={{ 
+          color: 'var(--color-text-primary)', 
+          marginBottom: 'var(--space-2)' 
+        }}>
           Algorithm Visualizer
         </h1>
-        <p className="text-gray-600 dark:text-gray-300">
+        <p className="body" style={{ color: 'var(--color-text-secondary)' }}>
           Choose an algorithm, hit start, and watch each step play out in real time
         </p>
       </div>
 
       {/* Control Panel */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-6 border border-gray-200 dark:border-gray-700">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Controls</h2>
+      <div style={{
+        backgroundColor: 'var(--color-bg-surface)',
+        borderRadius: 'var(--radius-md)',
+        boxShadow: 'var(--shadow-md)',
+        padding: 'var(--space-6)',
+        marginBottom: 'var(--space-6)',
+        border: '1px solid var(--color-border-subtle)',
+      }}>
+        <h2 className="h3" style={{ 
+          color: 'var(--color-text-primary)', 
+          marginBottom: 'var(--space-4)' 
+        }}>Controls</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Algorithm Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block body-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>
               Algorithm
             </label>
             <select
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="w-full"
+              style={{
+                padding: 'var(--space-3) var(--space-4)',
+                border: '1px solid var(--color-border-subtle)',
+                borderRadius: 'var(--radius-sm)',
+                backgroundColor: 'var(--color-bg-surface)',
+                color: 'var(--color-text-primary)',
+                fontSize: 'var(--font-size-md)',
+              }}
               value={algoId || 'bubble-sort'}
               onChange={(e) => window.location.href = `/visualizer/${e.target.value}`}
             >
@@ -149,7 +170,7 @@ export default function Visualizer() {
 
           {/* Array Size */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block body-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>
               Array Size: {arraySize}
             </label>
             <input
@@ -158,13 +179,14 @@ export default function Visualizer() {
               max="20"
               value={arraySize}
               onChange={(e) => setArraySize(parseInt(e.target.value))}
-              className="w-full"
+              className="w-full accent-[var(--color-accent-primary)]"
+              style={{ height: '4px' }}
             />
           </div>
 
           {/* Step Delay */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block body-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>
               Step Delay: {speed}ms
             </label>
             <input
@@ -174,13 +196,14 @@ export default function Visualizer() {
               step="100"
               value={speed}
               onChange={(e) => setSpeed(parseInt(e.target.value))}
-              className="w-full"
+              className="w-full accent-[var(--color-accent-primary)]"
+              style={{ height: '4px' }}
             />
           </div>
 
           {/* Custom Input */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block body-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>
               Custom Array (comma-separated)
             </label>
             <input
@@ -193,7 +216,15 @@ export default function Visualizer() {
                   initializeVisualization();
                 }
               }}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              className="w-full"
+              style={{
+                padding: 'var(--space-3) var(--space-4)',
+                border: '1px solid var(--color-border-subtle)',
+                borderRadius: 'var(--radius-sm)',
+                backgroundColor: 'var(--color-bg-surface)',
+                color: 'var(--color-text-primary)',
+                fontSize: 'var(--font-size-md)',
+              }}
             />
           </div>
         </div>
@@ -203,14 +234,34 @@ export default function Visualizer() {
           {!isPlaying ? (
             <button
               onClick={handleStart}
-              className="px-6 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-semibold transition-colors"
+              className="font-semibold transition-all"
+              style={{
+                padding: 'var(--space-3) var(--space-5)',
+                backgroundColor: 'var(--color-accent-primary)',
+                color: 'var(--color-text-on-primary)',
+                borderRadius: 'var(--radius-pill)',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: 'var(--font-size-md)',
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--color-primary-600)'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--color-accent-primary)'}
             >
               ▶ Start Visualization
             </button>
           ) : (
             <button
               onClick={handlePause}
-              className="px-6 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-semibold transition-colors"
+              className="font-semibold transition-all"
+              style={{
+                padding: 'var(--space-3) var(--space-5)',
+                backgroundColor: 'var(--color-orange-500)',
+                color: 'var(--color-text-on-primary)',
+                borderRadius: 'var(--radius-pill)',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: 'var(--font-size-md)',
+              }}
             >
               ⏸ Pause
             </button>
@@ -218,7 +269,16 @@ export default function Visualizer() {
           
           <button
             onClick={handleStop}
-            className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-colors"
+            className="font-semibold transition-all"
+            style={{
+              padding: 'var(--space-3) var(--space-5)',
+              backgroundColor: 'var(--color-red-500)',
+              color: 'var(--color-text-on-primary)',
+              borderRadius: 'var(--radius-pill)',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: 'var(--font-size-md)',
+            }}
           >
             ⏹ Stop / Reset
           </button>
@@ -226,7 +286,16 @@ export default function Visualizer() {
           <button
             onClick={handlePrevious}
             disabled={currentStep === 0}
-            className="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{
+              padding: 'var(--space-3) var(--space-5)',
+              backgroundColor: 'transparent',
+              color: 'var(--color-text-primary)',
+              borderRadius: 'var(--radius-md)',
+              border: '1px solid var(--color-border-subtle)',
+              cursor: currentStep === 0 ? 'not-allowed' : 'pointer',
+              fontSize: 'var(--font-size-md)',
+            }}
           >
             ◀ Previous
           </button>
@@ -234,14 +303,32 @@ export default function Visualizer() {
           <button
             onClick={handleNext}
             disabled={currentStep === totalSteps - 1}
-            className="px-6 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{
+              padding: 'var(--space-3) var(--space-5)',
+              backgroundColor: 'transparent',
+              color: 'var(--color-text-primary)',
+              borderRadius: 'var(--radius-md)',
+              border: '1px solid var(--color-border-subtle)',
+              cursor: currentStep === totalSteps - 1 ? 'not-allowed' : 'pointer',
+              fontSize: 'var(--font-size-md)',
+            }}
           >
             Next ▶
           </button>
 
           <button
             onClick={handleRestart}
-            className="px-6 py-2 bg-secondary-600 hover:bg-secondary-700 text-white rounded-lg font-semibold transition-colors"
+            className="font-semibold transition-all"
+            style={{
+              padding: 'var(--space-3) var(--space-5)',
+              backgroundColor: 'var(--color-accent-secondary)',
+              color: 'var(--color-text-on-primary)',
+              borderRadius: 'var(--radius-pill)',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: 'var(--font-size-md)',
+            }}
           >
             🔄 Restart
           </button>
@@ -249,35 +336,63 @@ export default function Visualizer() {
       </div>
 
       {/* Visualization Canvas */}
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Visualization</h2>
+      <div style={{ marginBottom: 'var(--space-6)' }}>
+        <h2 className="h3" style={{ 
+          color: 'var(--color-text-primary)', 
+          marginBottom: 'var(--space-4)' 
+        }}>Visualization</h2>
         {currentStepData && (
           <SortingBarsCanvas state={currentStepData.state} width={800} height={400} />
         )}
       </div>
 
       {/* Step Information */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+      <div style={{
+        backgroundColor: 'var(--color-bg-surface)',
+        borderRadius: 'var(--radius-md)',
+        boxShadow: 'var(--shadow-md)',
+        padding: 'var(--space-6)',
+        border: '1px solid var(--color-border-subtle)',
+      }}>
+        <h2 className="h3" style={{ 
+          color: 'var(--color-text-primary)', 
+          marginBottom: 'var(--space-4)' 
+        }}>
           Step Information
         </h2>
-        <div className="mb-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-gray-700 dark:text-gray-300 font-medium">
+        <div style={{ marginBottom: 'var(--space-4)' }}>
+          <div className="flex items-center justify-between" style={{ marginBottom: 'var(--space-2)' }}>
+            <span className="caption font-medium" style={{ color: 'var(--color-text-secondary)' }}>
               Step {currentStep + 1} of {totalSteps}
             </span>
             {currentStepData?.metadata?.label && (
-              <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-sm">
+              <span style={{
+                padding: 'var(--space-1) var(--space-3)',
+                backgroundColor: 'var(--color-bg-chip)',
+                color: 'var(--color-accent-primary)',
+                borderRadius: 'var(--radius-pill)',
+                fontSize: 'var(--font-size-sm)',
+                fontWeight: 600,
+              }}>
                 {currentStepData.metadata.label}
               </span>
             )}
           </div>
           
           {/* Progress bar */}
-          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+          <div className="w-full" style={{
+            backgroundColor: 'var(--viz-bar-default)',
+            borderRadius: 'var(--radius-pill)',
+            height: '4px',
+          }}>
             <div
-              className="bg-primary-600 h-2 rounded-full transition-all duration-300"
-              style={{ width: `${((currentStep + 1) / totalSteps) * 100}%` }}
+              className="transition-all duration-300"
+              style={{ 
+                width: `${((currentStep + 1) / totalSteps) * 100}%`,
+                backgroundColor: 'var(--color-accent-primary)',
+                height: '4px',
+                borderRadius: 'var(--radius-pill)',
+              }}
             ></div>
           </div>
         </div>
@@ -285,39 +400,45 @@ export default function Visualizer() {
         {currentStepData && (
           <div className="space-y-4">
             <div>
-              <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+              <h3 className="body-sm font-semibold" style={{ 
+                color: 'var(--color-text-secondary)', 
+                marginBottom: 'var(--space-1)' 
+              }}>
                 Description
               </h3>
-              <p className="text-gray-900 dark:text-white">
+              <p className="body" style={{ color: 'var(--color-text-primary)' }}>
                 {currentStepData.description}
               </p>
             </div>
 
             {currentStepData.reason && (
               <div>
-                <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                <h3 className="body-sm font-semibold" style={{ 
+                  color: 'var(--color-text-secondary)', 
+                  marginBottom: 'var(--space-1)' 
+                }}>
                   Why?
                 </h3>
-                <p className="text-gray-900 dark:text-white italic">
+                <p className="body italic" style={{ color: 'var(--color-text-primary)' }}>
                   {currentStepData.reason}
                 </p>
               </div>
             )}
 
             {currentStepData.metadata && (
-              <div className="flex gap-4 text-sm">
+              <div className="flex gap-4 body-sm">
                 {currentStepData.metadata.comparisons !== undefined && (
                   <div>
-                    <span className="text-gray-600 dark:text-gray-400">Comparisons: </span>
-                    <span className="font-semibold text-gray-900 dark:text-white">
+                    <span style={{ color: 'var(--color-text-secondary)' }}>Comparisons: </span>
+                    <span className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>
                       {currentStepData.metadata.comparisons}
                     </span>
                   </div>
                 )}
                 {currentStepData.metadata.swaps !== undefined && (
                   <div>
-                    <span className="text-gray-600 dark:text-gray-400">Swaps: </span>
-                    <span className="font-semibold text-gray-900 dark:text-white">
+                    <span style={{ color: 'var(--color-text-secondary)' }}>Swaps: </span>
+                    <span className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>
                       {currentStepData.metadata.swaps}
                     </span>
                   </div>

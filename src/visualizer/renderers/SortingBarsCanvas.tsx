@@ -10,28 +10,35 @@ export default function SortingBarsCanvas({ state, width = 800, height = 400 }: 
   const { array, comparing, swapping, sorted = [] } = state;
   const maxValue = Math.max(...array);
   const barWidth = Math.floor((width - 40) / array.length);
-  const barSpacing = 4;
+  const barSpacing = 2;
 
   const getBarColor = (index: number): string => {
+    // Using design token colors for semantic meaning
     if (sorted.includes(index)) {
-      return 'bg-green-500'; // Sorted - green
+      return 'bg-[var(--viz-bar-final)]'; // Sorted - green
     }
     if (comparing && (comparing[0] === index || comparing[1] === index)) {
-      return 'bg-orange-500'; // Comparing - orange
+      return 'bg-[var(--viz-bar-current)]'; // Comparing - orange
     }
     if (swapping && (swapping[0] === index || swapping[1] === index)) {
-      return 'bg-purple-500'; // Swapping - purple
+      return 'bg-[var(--viz-bar-comparison)]'; // Swapping - purple
     }
-    return 'bg-blue-500'; // Default - blue
+    return 'bg-[var(--viz-bar-default)]'; // Default - gray
   };
 
   return (
     <div 
-      className="relative bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700"
-      style={{ width: `${width}px`, height: `${height}px` }}
+      className="relative rounded-md shadow-md border"
+      style={{ 
+        width: `${width}px`, 
+        height: `${height}px`,
+        backgroundColor: 'var(--color-bg-surface)',
+        borderColor: 'var(--color-border-subtle)',
+        padding: 'var(--space-5)',
+      }}
     >
       {/* Canvas area */}
-      <div className="absolute inset-4 flex items-end justify-center gap-1">
+      <div className="absolute inset-5 flex items-end justify-center gap-1">
         {array.map((value, index) => {
           const barHeight = (value / maxValue) * (height - 80);
           return (
@@ -42,19 +49,33 @@ export default function SortingBarsCanvas({ state, width = 800, height = 400 }: 
             >
               {/* Bar */}
               <div
-                className={`${getBarColor(index)} transition-all duration-300 rounded-t flex items-end justify-center`}
+                className={`${getBarColor(index)} transition-all duration-300 flex items-end justify-center`}
                 style={{ 
                   height: `${barHeight}px`,
                   width: '100%',
+                  borderTopLeftRadius: 'var(--radius-sm)',
+                  borderTopRightRadius: 'var(--radius-sm)',
                 }}
               >
                 {/* Value label */}
-                <span className="text-white font-semibold text-xs mb-1">
+                <span 
+                  className="font-semibold mb-1"
+                  style={{ 
+                    fontSize: 'var(--font-size-xs)',
+                    color: 'var(--color-text-on-primary)',
+                  }}
+                >
                   {value}
                 </span>
               </div>
               {/* Index label */}
-              <span className="text-gray-600 dark:text-gray-400 text-xs mt-1">
+              <span 
+                className="mt-1"
+                style={{ 
+                  fontSize: 'var(--font-size-xs)',
+                  color: 'var(--color-text-secondary)',
+                }}
+              >
                 {index}
               </span>
             </div>
@@ -62,23 +83,50 @@ export default function SortingBarsCanvas({ state, width = 800, height = 400 }: 
         })}
       </div>
 
-      {/* Legend */}
-      <div className="absolute bottom-2 left-4 flex gap-4 text-xs">
+      {/* Legend with semantic color chips */}
+      <div 
+        className="absolute bottom-2 left-4 flex gap-4"
+        style={{ fontSize: 'var(--font-size-xs)' }}
+      >
         <div className="flex items-center gap-1">
-          <div className="w-3 h-3 bg-blue-500 rounded"></div>
-          <span className="text-gray-600 dark:text-gray-300">Unsorted</span>
+          <div 
+            className="w-3 h-3"
+            style={{ 
+              backgroundColor: 'var(--viz-bar-default)',
+              borderRadius: 'var(--radius-sm)',
+            }}
+          ></div>
+          <span style={{ color: 'var(--color-text-secondary)' }}>Unsorted</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-3 h-3 bg-orange-500 rounded"></div>
-          <span className="text-gray-600 dark:text-gray-300">Comparing</span>
+          <div 
+            className="w-3 h-3"
+            style={{ 
+              backgroundColor: 'var(--viz-bar-current)',
+              borderRadius: 'var(--radius-sm)',
+            }}
+          ></div>
+          <span style={{ color: 'var(--color-text-secondary)' }}>Comparing</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-3 h-3 bg-purple-500 rounded"></div>
-          <span className="text-gray-600 dark:text-gray-300">Swapping</span>
+          <div 
+            className="w-3 h-3"
+            style={{ 
+              backgroundColor: 'var(--viz-bar-comparison)',
+              borderRadius: 'var(--radius-sm)',
+            }}
+          ></div>
+          <span style={{ color: 'var(--color-text-secondary)' }}>Swapping</span>
         </div>
         <div className="flex items-center gap-1">
-          <div className="w-3 h-3 bg-green-500 rounded"></div>
-          <span className="text-gray-600 dark:text-gray-300">Sorted</span>
+          <div 
+            className="w-3 h-3"
+            style={{ 
+              backgroundColor: 'var(--viz-bar-final)',
+              borderRadius: 'var(--radius-sm)',
+            }}
+          ></div>
+          <span style={{ color: 'var(--color-text-secondary)' }}>Sorted</span>
         </div>
       </div>
     </div>
