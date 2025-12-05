@@ -1,13 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { getSettings, applyTheme, type UserSettings } from '../../utils/localStorage';
 
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState<UserSettings['theme']>('light');
-
-  useEffect(() => {
+  const [theme, setTheme] = useState<UserSettings['theme']>(() => {
     const settings = getSettings();
-    setTheme(settings.theme);
-  }, []);
+    return settings.theme;
+  });
 
   const handleThemeChange = (newTheme: UserSettings['theme']) => {
     setTheme(newTheme);

@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { VisualRunner } from '../../visualizer/engine/VisualRunner';
 import { BubbleSort } from '../../visualizer/algorithms/sorting/BubbleSort';
 import { InsertionSort } from '../../visualizer/algorithms/sorting/InsertionSort';
@@ -55,7 +55,7 @@ export default function Visualizer() {
     }
   };
 
-  const initializeVisualization = () => {
+  const initializeVisualization = useCallback(() => {
     let steps;
     
     if (algorithm.categoryId === 'sorting') {
@@ -83,22 +83,61 @@ export default function Visualizer() {
 
     setCurrentStep(0);
     setTotalSteps(steps.length);
-  };
+  }, [algorithm, arraySize, customInput, speed]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     initializeVisualization();
     return () => {
       if (runnerRef.current) {
         runnerRef.current.destroy();
       }
     };
-  }, [algorithm, arraySize]);
+  }, [initializeVisualization]);
 
   useEffect(() => {
     if (runnerRef.current) {
       runnerRef.current.setSpeed(speed);
     }
   }, [speed]);
+
+  const handleStart = useCallback(() => {
+    if (runnerRef.current) {
+      runnerRef.current.play();
+      setIsPlaying(true);
+    }
+  }, []);
+
+  const handlePause = useCallback(() => {
+    if (runnerRef.current) {
+      runnerRef.current.pause();
+      setIsPlaying(false);
+    }
+  }, []);
+
+  const handleStop = useCallback(() => {
+    if (runnerRef.current) {
+      runnerRef.current.stop();
+      setIsPlaying(false);
+    }
+  }, []);
+
+  const handleNext = useCallback(() => {
+    if (runnerRef.current) {
+      runnerRef.current.next();
+    }
+  }, []);
+
+  const handlePrevious = useCallback(() => {
+    if (runnerRef.current) {
+      runnerRef.current.previous();
+    }
+  }, []);
+
+  const handleRestart = useCallback(() => {
+    initializeVisualization();
+    setIsPlaying(false);
+  }, [initializeVisualization]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -140,47 +179,16 @@ export default function Visualizer() {
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [isPlaying, currentStep, totalSteps]);
+  }, [isPlaying, handlePause, handleStart, handleNext, handlePrevious, handleRestart, handleStop]);
 
-  const handleStart = () => {
+  // Store currentStepData in state to avoid accessing ref during render
+  const [currentStepData, setCurrentStepData] = useState<ReturnType<VisualRunner['getCurrentStep']> | undefined>();
+
+  useEffect(() => {
     if (runnerRef.current) {
-      runnerRef.current.play();
-      setIsPlaying(true);
+      setCurrentStepData(runnerRef.current.getCurrentStep());
     }
-  };
-
-  const handlePause = () => {
-    if (runnerRef.current) {
-      runnerRef.current.pause();
-      setIsPlaying(false);
-    }
-  };
-
-  const handleStop = () => {
-    if (runnerRef.current) {
-      runnerRef.current.stop();
-      setIsPlaying(false);
-    }
-  };
-
-  const handleNext = () => {
-    if (runnerRef.current) {
-      runnerRef.current.next();
-    }
-  };
-
-  const handlePrevious = () => {
-    if (runnerRef.current) {
-      runnerRef.current.previous();
-    }
-  };
-
-  const handleRestart = () => {
-    initializeVisualization();
-    setIsPlaying(false);
-  };
-
-  const currentStepData = runnerRef.current?.getCurrentStep();
+  }, [currentStep]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

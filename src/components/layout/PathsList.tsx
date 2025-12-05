@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import dsaBeginnerPath from '../../content/paths/dsa-beginner.json';
 import type { LearningPath } from '../../visualizer/engine/types';
 import { getTopicProgress } from '../../utils/localStorage';
@@ -7,9 +7,7 @@ import { getTopicProgress } from '../../utils/localStorage';
 const allPaths: LearningPath[] = [dsaBeginnerPath as LearningPath];
 
 export default function PathsList() {
-  const [pathProgress, setPathProgress] = useState<{ [pathId: string]: number }>({});
-
-  useEffect(() => {
+  const [pathProgress] = useState<{ [pathId: string]: number }>(() => {
     // Calculate progress for each path
     const progress: { [pathId: string]: number } = {};
     
@@ -21,8 +19,8 @@ export default function PathsList() {
       progress[path.id] = Math.round((completedCount / path.topicIds.length) * 100);
     });
 
-    setPathProgress(progress);
-  }, []);
+    return progress;
+  });
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

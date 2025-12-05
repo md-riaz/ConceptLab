@@ -1,5 +1,5 @@
 import { useParams, Link } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import categories from '../../content/categories.json';
 import bubbleSortTopic from '../../content/topics/bubble-sort.json';
 import insertionSortTopic from '../../content/topics/insertion-sort.json';
@@ -73,23 +73,22 @@ function renderMarkdown(markdown: string) {
 
 export default function TopicDetail() {
   const { slug } = useParams();
-  const [progress, setProgress] = useState<'not_started' | 'in_progress' | 'completed'>('not_started');
-
   const topic = allTopics.find(t => t.slug === slug);
 
-  useEffect(() => {
+  const [progress] = useState<'not_started' | 'in_progress' | 'completed'>(() => {
     if (topic) {
       const currentProgress = getTopicProgress(topic.id);
       const status = currentProgress?.status || 'not_started';
-      setProgress(status);
       
       // Mark as in progress if not started
       if (status === 'not_started') {
         markAsInProgress(topic.id);
-        setProgress('in_progress');
+        return 'in_progress';
       }
+      return status;
     }
-  }, [topic]);
+    return 'not_started';
+  });
 
   if (!topic) {
     return (

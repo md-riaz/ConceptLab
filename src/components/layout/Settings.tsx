@@ -1,22 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { getUserSettings, saveUserSettings, clearAllProgress } from '../../utils/localStorage';
 import type { UserSettings } from '../../visualizer/engine/types';
 
 export default function Settings() {
-  const [settings, setSettings] = useState<UserSettings>({
-    theme: 'light',
-    defaultLanguage: 'python',
-    defaultSpeedMs: 500,
-    defaultRepresentation: 'bars',
-  });
+  const [settings, setSettings] = useState<UserSettings>(() => getUserSettings());
 
   const [showSaveMessage, setShowSaveMessage] = useState(false);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
-
-  useEffect(() => {
-    const currentSettings = getUserSettings();
-    setSettings(currentSettings);
-  }, []);
 
   const handleSave = () => {
     saveUserSettings(settings);

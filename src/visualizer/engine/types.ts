@@ -3,6 +3,7 @@
  */
 
 // A single step in the visualization
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface VisualStep<State = any> {
   index: number;            // 0-based step index
   state: State;             // serializable state to be rendered
@@ -20,6 +21,7 @@ export interface VisualStep<State = any> {
 }
 
 // Generic algorithm descriptor
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface VisualAlgorithm<State = any, Input = any> {
   id: string;
   name: string;
@@ -29,7 +31,9 @@ export interface VisualAlgorithm<State = any, Input = any> {
   generateSteps(input: Input): VisualStep<State>[];
 
   // For self-validation
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   referenceImplementation(input: Input): any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   compareResult(finalState: State, referenceResult: any): boolean;
 }
 

@@ -6,6 +6,7 @@ export interface VisualRunnerOptions {
   onComplete?: () => void;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export class VisualRunner<State = any> {
   private steps: VisualStep<State>[];
   private currentStepIndex: number = 0;

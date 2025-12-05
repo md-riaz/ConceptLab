@@ -1,5 +1,5 @@
 import { useParams, Link } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import dsaBeginnerPath from '../../content/paths/dsa-beginner.json';
 import bubbleSortTopic from '../../content/topics/bubble-sort.json';
 import insertionSortTopic from '../../content/topics/insertion-sort.json';
@@ -16,20 +16,19 @@ const allTopics: Topic[] = [
 
 export default function PathDetail() {
   const { pathId } = useParams();
-  const [topicsProgress, setTopicsProgress] = useState<{ [topicId: string]: string }>({});
-
   const path = allPaths.find(p => p.id === pathId);
 
-  useEffect(() => {
+  const [topicsProgress, setTopicsProgress] = useState<{ [topicId: string]: string }>(() => {
     if (path) {
       const progress: { [topicId: string]: string } = {};
       path.topicIds.forEach(topicId => {
         const topicProgress = getTopicProgress(topicId);
         progress[topicId] = topicProgress?.status || 'not_started';
       });
-      setTopicsProgress(progress);
+      return progress;
     }
-  }, [path]);
+    return {};
+  });
 
   if (!path) {
     return (
