@@ -1,0 +1,32 @@
+{
+  "id": "bfs",
+  "slug": "bfs",
+  "title": "Breadth-First Search (BFS)",
+  "categoryId": "graph",
+  "tags": ["graph", "traversal", "queue", "shortest-path"],
+  "difficulty": "medium",
+  "summary": "Level-by-level graph traversal using a queue",
+  "visualAlgorithmId": "bfs",
+  "sections": [
+    {
+      "id": "intuition",
+      "title": "Intuition",
+      "contentMarkdown": "Breadth-First Search explores a graph **level by level**, like ripples expanding outward from a stone dropped in water. Starting from a source node, BFS visits all neighbors at distance 1, then all neighbors at distance 2, and so on.\n\nThink of it as exploring a maze by checking all paths that are 1 step away, then all paths that are 2 steps away, systematically ensuring you find the shortest path to any reachable location.\n\n**Key characteristic**: BFS uses a **queue** (First-In-First-Out) to track which nodes to explore next, ensuring level-order traversal."
+    },
+    {
+      "id": "complexity",
+      "title": "Time & Space Complexity",
+      "contentMarkdown": "**Time Complexity**: O(V + E)\n- Visit each vertex once: O(V)\n- Explore each edge once: O(E)\n- Combined: O(V + E)\n\n**Space Complexity**: O(V)\n- Queue can hold up to O(V) nodes\n- Visited set stores O(V) nodes\n- Where V = number of vertices, E = number of edges"
+    },
+    {
+      "id": "when-to-use",
+      "title": "When to Use BFS",
+      "contentMarkdown": "✅ **Use BFS when:**\n- Finding the **shortest path** in an unweighted graph\n- Level-order traversal is needed\n- Exploring neighbors before going deeper\n- Finding all nodes within k distance\n- Solving puzzles with minimum moves (e.g., chess knight, word ladder)\n\n❌ **Don't use BFS when:**\n- Graph is very wide (many neighbors per node) - high memory usage\n- Depth-first exploration is more natural for the problem\n- Only need to check if path exists (DFS is simpler)"
+    },
+    {
+      "id": "variations",
+      "title": "Variations & Related Algorithms",
+      "contentMarkdown": "**Bidirectional BFS**: Start from both source and target, meet in the middle\n\n**Multi-source BFS**: Start BFS from multiple sources simultaneously\n\n**0-1 BFS**: Variant for graphs with 0 and 1 edge weights using deque\n\n**Dijkstra's Algorithm**: Weighted version of BFS using priority queue"
+    }
+  ]
+}

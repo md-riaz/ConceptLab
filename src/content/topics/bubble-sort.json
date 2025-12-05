@@ -1,0 +1,27 @@
+{
+  "id": "bubble-sort",
+  "slug": "bubble-sort",
+  "title": "Bubble Sort",
+  "categoryId": "sorting",
+  "tags": ["sorting", "comparison", "beginner"],
+  "difficulty": "easy",
+  "summary": "A simple comparison-based sorting algorithm that repeatedly steps through the list, compares adjacent elements and swaps them if they are in the wrong order.",
+  "visualAlgorithmId": "bubble-sort",
+  "sections": [
+    {
+      "id": "intuition",
+      "title": "Intuition",
+      "contentMarkdown": "Think of Bubble Sort as repeatedly bubbling the largest element to the right end, like air bubbles rising to the surface of water. In each pass through the array, we compare adjacent pairs and swap them if they're out of order."
+    },
+    {
+      "id": "complexity",
+      "title": "Time Complexity",
+      "contentMarkdown": "- **Best Case:** O(n) - When the array is already sorted\n- **Average Case:** O(n²) - For random arrays\n- **Worst Case:** O(n²) - When the array is reverse sorted\n\n**Space Complexity:** O(1) - Only uses a constant amount of extra memory"
+    },
+    {
+      "id": "when-to-use",
+      "title": "When to Reach For It",
+      "contentMarkdown": "✅ **Good for:**\n- Small datasets (< 10 elements)\n- Nearly sorted data\n- Educational purposes\n- When simplicity is more important than performance\n\n❌ **Avoid when:**\n- Dealing with large datasets\n- Performance is critical\n- You need O(n log n) time"
+    }
+  ]
+}

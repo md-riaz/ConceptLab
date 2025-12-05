@@ -1,0 +1,32 @@
+{
+  "id": "sjf",
+  "slug": "sjf",
+  "title": "Shortest Job First (SJF)",
+  "categoryId": "os",
+  "tags": ["CPU Scheduling", "Non-Preemptive", "Optimal"],
+  "difficulty": "medium",
+  "summary": "Optimal scheduling algorithm that selects the process with the smallest burst time from the ready queue",
+  "visualAlgorithmId": "sjf",
+  "sections": [
+    {
+      "id": "intuition",
+      "title": "Intuition",
+      "contentMarkdown": "Shortest Job First is like a grocery store express lane - customers with fewer items get served first. The scheduler always picks the process with the **shortest CPU burst time** from the ready queue.\n\nWhy is this smart? Because serving short jobs first minimizes the **average waiting time** for all processes. Imagine 5 people in line: one needs 20 minutes, four need 1 minute each. If the 20-minute person goes first, everyone waits a total of 20+21+22+23+24 = 110 minutes. But if short jobs go first, total waiting is 1+2+3+4+24 = 34 minutes!\n\n**The Problem**: We need to know burst times in advance, which is rarely possible in practice. In real systems, we estimate based on previous behavior (exponential averaging).\n\n**Important**: This is **non-preemptive** - once a process starts, it runs to completion. The preemptive version is called SRTF (Shortest Remaining Time First)."
+    },
+    {
+      "id": "complexity",
+      "title": "Time & Space Complexity",
+      "contentMarkdown": "**Time Complexity**: O(n log n) for sorting processes by burst time initially, O(n) per scheduling decision.\n\n**Space Complexity**: O(n) for maintaining process information and ready queue.\n\n**Optimality**: SJF is **provably optimal** for minimizing average waiting time among non-preemptive algorithms.\n\n**Performance Characteristics**:\n- Minimum average waiting time\n- Can cause **starvation** of long processes\n- Requires accurate burst time prediction\n- Better throughput than FCFS\n- Not suitable for interactive systems (long processes wait indefinitely)"
+    },
+    {
+      "id": "when-to-use",
+      "title": "When to Reach For It",
+      "contentMarkdown": "**Use SJF when:**\n\n✅ **Minimizing average waiting time**: This is your primary goal\n\n✅ **Burst times are predictable**: You can estimate process lengths accurately\n\n✅ **Batch processing**: Jobs are submitted in advance with known characteristics\n\n✅ **Academic/theoretical context**: Teaching optimal scheduling concepts\n\n**Avoid SJF when:**\n\n❌ **Interactive systems**: Users expect responsive behavior regardless of task length\n\n❌ **Unknown burst times**: Can't predict how long processes will run\n\n❌ **Fairness required**: Long processes may starve\n\n❌ **Real-time requirements**: Deadlines matter more than average performance\n\n❌ **Variable workloads**: Process lengths vary unpredictably"
+    },
+    {
+      "id": "variations",
+      "title": "Variations & Related Algorithms",
+      "contentMarkdown": "**Shortest Remaining Time First (SRTF)**: Preemptive version of SJF - switches to a newly arrived shorter job\n\n**Exponential Averaging**: τ(n+1) = α × t(n) + (1-α) × τ(n) - predicts next burst based on history\n\n**Aging**: Gradually increase priority of waiting processes to prevent starvation\n\n**Multilevel Feedback Queue with SJF**: Estimate burst times and place processes in appropriate queues\n\n**Related Algorithms**:\n- FCFS (First-Come-First-Served): Simpler but not optimal\n- Priority Scheduling: Can assign priority based on burst time\n- Lottery Scheduling: Probabilistic alternative\n- Completely Fair Scheduler: Modern Linux approach balancing multiple factors"
+    }
+  ]
+}

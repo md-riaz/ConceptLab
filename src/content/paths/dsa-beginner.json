@@ -1,0 +1,14 @@
+{
+  "id": "dsa-beginner",
+  "title": "DSA & CS Fundamentals Path",
+  "description": "Master fundamental algorithms across sorting, graph traversal, and operating system scheduling",
+  "topicIds": [
+    "bubble-sort",
+    "insertion-sort",
+    "merge-sort",
+    "bfs",
+    "dfs",
+    "round-robin",
+    "sjf"
+  ]
+}

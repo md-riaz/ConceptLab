@@ -1,0 +1,32 @@
+[
+  {
+    "id": "sorting",
+    "name": "Sorting Algorithms",
+    "description": "Learn fundamental sorting techniques",
+    "icon": "🔃"
+  },
+  {
+    "id": "graph",
+    "name": "Graph Algorithms",
+    "description": "Explore graph traversal and pathfinding",
+    "icon": "🕸️"
+  },
+  {
+    "id": "tree",
+    "name": "Tree Structures",
+    "description": "Understand hierarchical data structures",
+    "icon": "🌳"
+  },
+  {
+    "id": "os",
+    "name": "Operating Systems",
+    "description": "CPU scheduling and memory management",
+    "icon": "💻"
+  },
+  {
+    "id": "dbms",
+    "name": "Database Systems",
+    "description": "Query optimization and indexing",
+    "icon": "🗄️"
+  }
+]

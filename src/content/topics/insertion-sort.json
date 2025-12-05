@@ -1,0 +1,27 @@
+{
+  "id": "insertion-sort",
+  "slug": "insertion-sort",
+  "title": "Insertion Sort",
+  "categoryId": "sorting",
+  "tags": ["sorting", "comparison", "beginner"],
+  "difficulty": "easy",
+  "summary": "A simple sorting algorithm that builds the final sorted array one item at a time, similar to sorting playing cards in your hands.",
+  "visualAlgorithmId": "insertion-sort",
+  "sections": [
+    {
+      "id": "intuition",
+      "title": "Intuition",
+      "contentMarkdown": "Think of Insertion Sort like organizing playing cards in your hand. You pick up one card at a time and insert it into its correct position among the cards you've already sorted. The left portion is always sorted, and you insert each new element into its proper place."
+    },
+    {
+      "id": "complexity",
+      "title": "Time Complexity",
+      "contentMarkdown": "- **Best Case:** O(n) - When the array is already sorted\n- **Average Case:** O(n²) - For random arrays\n- **Worst Case:** O(n²) - When the array is reverse sorted\n\n**Space Complexity:** O(1) - Only uses a constant amount of extra memory"
+    },
+    {
+      "id": "when-to-use",
+      "title": "When to Reach For It",
+      "contentMarkdown": "✅ **Good for:**\n- Small datasets\n- Nearly sorted data (performs very well)\n- Online algorithms (sorting data as it arrives)\n- When stability is required\n\n❌ **Avoid when:**\n- Dealing with large datasets\n- Data is completely random or reverse sorted"
+    }
+  ]
+}
