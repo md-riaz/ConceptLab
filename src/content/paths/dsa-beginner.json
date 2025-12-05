@@ -1,11 +1,12 @@
 {
   "id": "dsa-beginner",
   "title": "DSA Beginner Path",
-  "description": "Start your journey with fundamental data structures and algorithms",
+  "description": "Master fundamental algorithms from sorting to graph traversal",
   "topicIds": [
     "bubble-sort",
     "insertion-sort",
     "merge-sort",
-    "quick-sort"
+    "bfs",
+    "dfs"
   ]
 }

@@ -1,0 +1,32 @@
+{
+  "id": "dfs",
+  "slug": "dfs",
+  "title": "Depth-First Search (DFS)",
+  "categoryId": "graph",
+  "tags": ["graph", "traversal", "stack", "backtracking"],
+  "difficulty": "medium",
+  "summary": "Deep graph exploration using a stack or recursion",
+  "visualAlgorithmId": "dfs",
+  "sections": [
+    {
+      "id": "intuition",
+      "title": "Intuition",
+      "contentMarkdown": "Depth-First Search explores a graph by going as **deep as possible** along each branch before backtracking. Imagine walking through a maze by always taking the first unexplored path you encounter, going as far as you can, then backtracking when you hit a dead end.\n\nDFS follows a **dive deep, then backtrack** strategy - it explores one path completely before trying another path.\n\n**Key characteristic**: DFS uses a **stack** (Last-In-First-Out) or recursion to track exploration, ensuring deep-first traversal."
+    },
+    {
+      "id": "complexity",
+      "title": "Time & Space Complexity",
+      "contentMarkdown": "**Time Complexity**: O(V + E)\n- Visit each vertex once: O(V)\n- Explore each edge once: O(E)\n- Combined: O(V + E)\n\n**Space Complexity**: O(V)\n- Stack can hold up to O(V) nodes in worst case (linear path)\n- Visited set stores O(V) nodes\n- Recursive implementation: O(V) call stack depth\n- Where V = number of vertices, E = number of edges"
+    },
+    {
+      "id": "when-to-use",
+      "title": "When to Use DFS",
+      "contentMarkdown": "✅ **Use DFS when:**\n- Exploring **all paths** or finding any path\n- Detecting cycles in a graph\n- Topological sorting\n- Finding strongly connected components\n- Solving puzzles with backtracking (e.g., Sudoku, N-Queens)\n- Path existence is sufficient (don't need shortest)\n\n❌ **Don't use DFS when:**\n- Need the **shortest path** in unweighted graphs (use BFS)\n- Graph is very deep - risk of stack overflow\n- Level-order traversal is required"
+    },
+    {
+      "id": "variations",
+      "title": "Variations & Applications",
+      "contentMarkdown": "**Iterative DFS**: Uses explicit stack instead of recursion\n\n**Tarjan's Algorithm**: Finds strongly connected components using DFS\n\n**Kosaraju's Algorithm**: Another SCC algorithm using two DFS passes\n\n**Topological Sort**: DFS-based ordering of directed acyclic graphs\n\n**Cycle Detection**: DFS can detect cycles by tracking visited nodes"
+    }
+  ]
+}

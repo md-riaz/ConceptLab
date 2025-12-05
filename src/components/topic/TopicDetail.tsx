@@ -4,6 +4,8 @@ import categories from '../../content/categories.json';
 import bubbleSortTopic from '../../content/topics/bubble-sort.json';
 import insertionSortTopic from '../../content/topics/insertion-sort.json';
 import mergeSortTopic from '../../content/topics/merge-sort.json';
+import bfsTopic from '../../content/topics/bfs.json';
+import dfsTopic from '../../content/topics/dfs.json';
 import type { Topic, Category } from '../../visualizer/engine/types';
 import { getTopicProgress, markAsInProgress } from '../../utils/localStorage';
 
@@ -12,6 +14,8 @@ const allTopics: Topic[] = [
   bubbleSortTopic as Topic,
   insertionSortTopic as Topic,
   mergeSortTopic as Topic,
+  bfsTopic as Topic,
+  dfsTopic as Topic,
 ];
 
 const difficultyColors = {
