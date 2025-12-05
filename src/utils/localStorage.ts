@@ -108,3 +108,18 @@ export function initializeTheme(): void {
   const settings = getSettings();
   applyTheme(settings.theme);
 }
+
+// Aliases for convenience
+export const getUserSettings = getSettings;
+export const saveUserSettings = setSettings;
+export const markAsCompleted = markTopicAsCompleted;
+export const markAsInProgress = markTopicAsInProgress;
+
+// Clear all progress
+export function clearAllProgress(): void {
+  try {
+    localStorage.removeItem(PROGRESS_KEY);
+  } catch (error) {
+    console.error('Failed to clear progress:', error);
+  }
+}

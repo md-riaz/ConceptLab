@@ -1,0 +1,27 @@
+{
+  "id": "merge-sort",
+  "slug": "merge-sort",
+  "title": "Merge Sort",
+  "categoryId": "sorting",
+  "tags": ["sorting", "divide-conquer", "intermediate"],
+  "difficulty": "medium",
+  "summary": "An efficient, stable sorting algorithm that uses divide-and-conquer strategy to recursively split and merge arrays.",
+  "visualAlgorithmId": "merge-sort",
+  "sections": [
+    {
+      "id": "intuition",
+      "title": "Intuition",
+      "contentMarkdown": "Merge Sort follows a divide-and-conquer approach. It repeatedly divides the array into two halves until each sub-array has just one element (which is trivially sorted). Then it merges these sub-arrays back together in sorted order. The key insight is that merging two sorted arrays is much easier than sorting from scratch."
+    },
+    {
+      "id": "complexity",
+      "title": "Time Complexity",
+      "contentMarkdown": "- **Best Case:** O(n log n)\n- **Average Case:** O(n log n)\n- **Worst Case:** O(n log n)\n\n**Space Complexity:** O(n) - Requires additional space for merging\n\nMerge Sort has consistent O(n log n) performance regardless of input, making it more predictable than Quick Sort."
+    },
+    {
+      "id": "when-to-use",
+      "title": "When to Reach For It",
+      "contentMarkdown": "✅ **Good for:**\n- Large datasets where O(n log n) is needed\n- When stable sorting is required\n- Linked lists (no random access needed)\n- When worst-case O(n log n) is required\n\n❌ **Avoid when:**\n- Memory is extremely limited\n- In-place sorting is required\n- For small arrays (overhead not worth it)"
+    }
+  ]
+}
