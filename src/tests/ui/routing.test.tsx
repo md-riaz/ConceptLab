@@ -38,7 +38,8 @@ describe('Routing Tests - Checkpoint 1', () => {
     });
     
     render(<RouterProvider router={testRouter} />);
-    expect(screen.getByText('Visualizer: bubble-sort')).toBeInTheDocument();
+    expect(screen.getByText('Choose an algorithm, hit start, and watch each step play out in real time')).toBeInTheDocument();
+    expect(screen.getByText('Controls')).toBeInTheDocument();
   });
 
   it('should render Paths list page', () => {
