@@ -6,6 +6,8 @@ import insertionSortTopic from '../../content/topics/insertion-sort.json';
 import mergeSortTopic from '../../content/topics/merge-sort.json';
 import bfsTopic from '../../content/topics/bfs.json';
 import dfsTopic from '../../content/topics/dfs.json';
+import roundRobinTopic from '../../content/topics/round-robin.json';
+import sjfTopic from '../../content/topics/sjf.json';
 import type { Topic, Category } from '../../visualizer/engine/types';
 import { getTopicProgress, markAsInProgress } from '../../utils/localStorage';
 
@@ -16,6 +18,8 @@ const allTopics: Topic[] = [
   mergeSortTopic as Topic,
   bfsTopic as Topic,
   dfsTopic as Topic,
+  roundRobinTopic as Topic,
+  sjfTopic as Topic,
 ];
 
 const difficultyColors = {

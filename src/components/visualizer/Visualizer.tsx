@@ -3,15 +3,29 @@ import { useState, useEffect, useRef } from 'react';
 import { VisualRunner } from '../../visualizer/engine/VisualRunner';
 import { BubbleSort } from '../../visualizer/algorithms/sorting/BubbleSort';
 import { InsertionSort } from '../../visualizer/algorithms/sorting/InsertionSort';
+import { BFS } from '../../visualizer/algorithms/graphs/BFS';
+import { DFS } from '../../visualizer/algorithms/graphs/DFS';
+import { RoundRobin } from '../../visualizer/algorithms/os/RoundRobin';
+import { SJF } from '../../visualizer/algorithms/os/SJF';
 import SortingBarsCanvas from '../../visualizer/renderers/SortingBarsCanvas';
+import { GraphCanvas } from '../../visualizer/renderers/GraphCanvas';
+import { GanttChart } from '../../visualizer/renderers/GanttChart';
 import PseudoCodeBlock from '../common/PseudoCodeBlock';
 import { pseudocodeMap } from '../../visualizer/pseudocode/sortingPseudocode';
+import { graphPseudocode } from '../../visualizer/pseudocode/graphPseudocode';
+import { osPseudocode } from '../../visualizer/pseudocode/osPseudocode';
 import type { VisualAlgorithm } from '../../visualizer/engine/types';
 
 const algorithms: Record<string, VisualAlgorithm> = {
   'bubble-sort': BubbleSort,
   'insertion-sort': InsertionSort,
+  'bfs': BFS,
+  'dfs': DFS,
+  'round-robin': RoundRobin,
+  'sjf': SJF,
 };
+
+const allPseudocode = { ...pseudocodeMap, ...graphPseudocode, ...osPseudocode };
 
 export default function Visualizer() {
   const { algoId } = useParams();
@@ -42,8 +56,15 @@ export default function Visualizer() {
   };
 
   const initializeVisualization = () => {
-    const inputArray = customInput ? (parseCustomInput(customInput) || generateRandomArray(arraySize)) : generateRandomArray(arraySize);
-    const steps = algorithm.generateSteps(inputArray);
+    let steps;
+    
+    if (algorithm.categoryId === 'sorting') {
+      const inputArray = customInput ? (parseCustomInput(customInput) || generateRandomArray(arraySize)) : generateRandomArray(arraySize);
+      steps = algorithm.generateSteps(inputArray);
+    } else {
+      // For non-sorting algorithms, use default input
+      steps = algorithm.generateSteps(algorithm.defaultInput);
+    }
     
     if (runnerRef.current) {
       runnerRef.current.destroy();
@@ -209,8 +230,18 @@ export default function Visualizer() {
               value={algoId || 'bubble-sort'}
               onChange={(e) => window.location.href = `/visualizer/${e.target.value}`}
             >
-              <option value="bubble-sort">Bubble Sort</option>
-              <option value="insertion-sort">Insertion Sort</option>
+              <optgroup label="Sorting Algorithms">
+                <option value="bubble-sort">Bubble Sort</option>
+                <option value="insertion-sort">Insertion Sort</option>
+              </optgroup>
+              <optgroup label="Graph Algorithms">
+                <option value="bfs">Breadth-First Search (BFS)</option>
+                <option value="dfs">Depth-First Search (DFS)</option>
+              </optgroup>
+              <optgroup label="OS Scheduling">
+                <option value="round-robin">Round Robin</option>
+                <option value="sjf">Shortest Job First (SJF)</option>
+              </optgroup>
             </select>
           </div>
 
@@ -388,7 +419,17 @@ export default function Visualizer() {
           marginBottom: 'var(--space-4)' 
         }}>Visualization</h2>
         {currentStepData && (
-          <SortingBarsCanvas state={currentStepData.state} width={800} height={400} />
+          <>
+            {algorithm.categoryId === 'sorting' && (
+              <SortingBarsCanvas state={currentStepData.state} width={800} height={400} />
+            )}
+            {algorithm.categoryId === 'graph' && (
+              <GraphCanvas state={currentStepData.state} width={800} height={500} />
+            )}
+            {algorithm.categoryId === 'os' && (
+              <GanttChart state={currentStepData.state} />
+            )}
+          </>
         )}
       </div>
 
@@ -563,7 +604,7 @@ export default function Visualizer() {
             {activeTab === 'pseudocode' && (
               <div>
                 <PseudoCodeBlock 
-                  code={pseudocodeMap[algoId || 'bubble-sort'] || '// Pseudo-code not available'}
+                  code={(allPseudocode as Record<string, string>)[algoId || 'bubble-sort'] || '// Pseudo-code not available'}
                   highlightedLine={currentStepData.pseudocodeLine}
                 />
               </div>

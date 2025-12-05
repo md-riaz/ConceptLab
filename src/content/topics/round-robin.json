@@ -1,0 +1,32 @@
+{
+  "id": "round-robin",
+  "slug": "round-robin",
+  "title": "Round Robin Scheduling",
+  "categoryId": "os",
+  "tags": ["CPU Scheduling", "Preemptive", "Time-Sharing"],
+  "difficulty": "easy",
+  "summary": "Cyclic scheduling algorithm that assigns fixed time slices to each process in the ready queue",
+  "visualAlgorithmId": "round-robin",
+  "sections": [
+    {
+      "id": "intuition",
+      "title": "Intuition",
+      "contentMarkdown": "Round Robin is like taking turns in a classroom - everyone gets an equal chance to speak for a fixed amount of time. Each process gets a small unit of CPU time called a **time quantum** (typically 10-100 milliseconds). When a process's time is up, it's interrupted and moved to the back of the queue, giving the next process a turn.\n\nThis ensures **fairness** - no process monopolizes the CPU. Even if a long-running task is in the queue, short tasks still get their turn quickly. It's perfect for time-sharing systems where multiple users need responsive performance.\n\n**Key Insight**: The choice of time quantum is critical. Too small → excessive context switching overhead. Too large → poor response time (degrades to FCFS)."
+    },
+    {
+      "id": "complexity",
+      "title": "Time & Space Complexity",
+      "contentMarkdown": "**Time Complexity**: O(n) per scheduling decision, where n is the number of processes in the ready queue.\n\n**Space Complexity**: O(n) for maintaining the ready queue and process information.\n\n**Context Switch Overhead**: Higher than non-preemptive algorithms due to frequent preemption.\n\n**Performance Characteristics**:\n- Average waiting time depends on time quantum\n- Better response time than FCFS\n- Not optimal for minimizing average turnaround time\n- Fair CPU distribution among all processes"
+    },
+    {
+      "id": "when-to-use",
+      "title": "When to Reach For It",
+      "contentMarkdown": "**Use Round Robin when:**\n\n✅ **Time-sharing systems**: Multiple users need interactive response\n\n✅ **Fair CPU sharing**: All processes should get equal CPU time\n\n✅ **Unknown burst times**: You don't know how long processes will run\n\n✅ **Response time matters**: Users expect quick feedback\n\n**Avoid Round Robin when:**\n\n❌ **Minimizing average waiting time**: SJF or SRTF would be better\n\n❌ **Real-time systems**: Priority-based scheduling is more appropriate\n\n❌ **High context switch cost**: If switching overhead is significant\n\n❌ **Batch processing**: FCFS might be more efficient"
+    },
+    {
+      "id": "variations",
+      "title": "Variations & Related Algorithms",
+      "contentMarkdown": "**Multilevel Queue Scheduling**: Separate queues for different priority levels, each using Round Robin\n\n**Multilevel Feedback Queue**: Processes can move between queues based on behavior\n\n**Virtual Round Robin**: Uses auxiliary queue for I/O bound processes\n\n**Weighted Round Robin**: Different processes get different time quantums based on priority\n\n**Related Algorithms**:\n- FCFS (First-Come-First-Served): Similar but without time quantum\n- Priority Scheduling: Can use RR within same priority levels\n- Completely Fair Scheduler (CFS): Linux's sophisticated RR variant"
+    }
+  ]
+}
