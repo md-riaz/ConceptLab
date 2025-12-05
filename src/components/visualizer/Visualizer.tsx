@@ -79,6 +79,48 @@ export default function Visualizer() {
     }
   }, [speed]);
 
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      // Ignore if user is typing in an input
+      if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+
+      switch (event.key) {
+        case ' ': // Space - Play/Pause
+          event.preventDefault();
+          if (isPlaying) {
+            handlePause();
+          } else {
+            handleStart();
+          }
+          break;
+        case 'ArrowLeft': // Previous step
+          event.preventDefault();
+          handlePrevious();
+          break;
+        case 'ArrowRight': // Next step
+          event.preventDefault();
+          handleNext();
+          break;
+        case 'r': // Restart
+        case 'R':
+          event.preventDefault();
+          handleRestart();
+          break;
+        case 's': // Stop
+        case 'S':
+          event.preventDefault();
+          handleStop();
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [isPlaying, currentStep, totalSteps]);
+
   const handleStart = () => {
     if (runnerRef.current) {
       runnerRef.current.play();

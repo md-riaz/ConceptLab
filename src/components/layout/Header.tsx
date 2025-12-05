@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import ThemeToggle from '../common/ThemeToggle';
 
 export default function Header() {
   return (
@@ -59,6 +60,7 @@ export default function Header() {
             >
               Settings
             </Link>
+            <ThemeToggle />
           </div>
         </div>
       </nav>

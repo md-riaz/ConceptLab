@@ -1,0 +1,11 @@
+{
+  "id": "dsa-beginner",
+  "title": "DSA Beginner Path",
+  "description": "Start your journey with fundamental data structures and algorithms",
+  "topicIds": [
+    "bubble-sort",
+    "insertion-sort",
+    "merge-sort",
+    "quick-sort"
+  ]
+}
