@@ -4,6 +4,8 @@ import { VisualRunner } from '../../visualizer/engine/VisualRunner';
 import { BubbleSort } from '../../visualizer/algorithms/sorting/BubbleSort';
 import { InsertionSort } from '../../visualizer/algorithms/sorting/InsertionSort';
 import SortingBarsCanvas from '../../visualizer/renderers/SortingBarsCanvas';
+import PseudoCodeBlock from '../common/PseudoCodeBlock';
+import { pseudocodeMap } from '../../visualizer/pseudocode/sortingPseudocode';
 import type { VisualAlgorithm } from '../../visualizer/engine/types';
 
 const algorithms: Record<string, VisualAlgorithm> = {
@@ -21,6 +23,8 @@ export default function Visualizer() {
   const [currentStep, setCurrentStep] = useState(0);
   const [totalSteps, setTotalSteps] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [activeTab, setActiveTab] = useState<'explanation' | 'pseudocode'>('explanation');
+  const [verboseMode, setVerboseMode] = useState(false);
   
   const runnerRef = useRef<VisualRunner | null>(null);
 
@@ -354,12 +358,58 @@ export default function Visualizer() {
         padding: 'var(--space-6)',
         border: '1px solid var(--color-border-subtle)',
       }}>
-        <h2 className="h3" style={{ 
-          color: 'var(--color-text-primary)', 
-          marginBottom: 'var(--space-4)' 
+        <div className="flex items-center justify-between" style={{ marginBottom: 'var(--space-4)' }}>
+          <h2 className="h3" style={{ color: 'var(--color-text-primary)' }}>
+            Step Information
+          </h2>
+          <label className="flex items-center gap-2 body-sm" style={{ cursor: 'pointer' }}>
+            <input
+              type="checkbox"
+              checked={verboseMode}
+              onChange={(e) => setVerboseMode(e.target.checked)}
+              style={{ cursor: 'pointer' }}
+            />
+            <span style={{ color: 'var(--color-text-secondary)' }}>Verbose Mode</span>
+          </label>
+        </div>
+
+        {/* Tabs */}
+        <div style={{ 
+          borderBottom: '1px solid var(--color-border-subtle)',
+          marginBottom: 'var(--space-4)',
+          display: 'flex',
+          gap: 'var(--space-4)',
         }}>
-          Step Information
-        </h2>
+          <button
+            onClick={() => setActiveTab('explanation')}
+            className="body-sm font-medium transition-colors"
+            style={{
+              padding: 'var(--space-2) var(--space-4)',
+              color: activeTab === 'explanation' ? 'var(--color-text-primary)' : 'var(--color-text-secondary)',
+              borderBottom: activeTab === 'explanation' ? '2px solid var(--color-accent-secondary)' : '2px solid transparent',
+              backgroundColor: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+            }}
+          >
+            Explanation
+          </button>
+          <button
+            onClick={() => setActiveTab('pseudocode')}
+            className="body-sm font-medium transition-colors"
+            style={{
+              padding: 'var(--space-2) var(--space-4)',
+              color: activeTab === 'pseudocode' ? 'var(--color-text-primary)' : 'var(--color-text-secondary)',
+              borderBottom: activeTab === 'pseudocode' ? '2px solid var(--color-accent-secondary)' : '2px solid transparent',
+              backgroundColor: 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+            }}
+          >
+            Pseudo-code
+          </button>
+        </div>
+
         <div style={{ marginBottom: 'var(--space-4)' }}>
           <div className="flex items-center justify-between" style={{ marginBottom: 'var(--space-2)' }}>
             <span className="caption font-medium" style={{ color: 'var(--color-text-secondary)' }}>
@@ -398,51 +448,82 @@ export default function Visualizer() {
         </div>
 
         {currentStepData && (
-          <div className="space-y-4">
-            <div>
-              <h3 className="body-sm font-semibold" style={{ 
-                color: 'var(--color-text-secondary)', 
-                marginBottom: 'var(--space-1)' 
-              }}>
-                Description
-              </h3>
-              <p className="body" style={{ color: 'var(--color-text-primary)' }}>
-                {currentStepData.description}
-              </p>
-            </div>
+          <div>
+            {activeTab === 'explanation' && (
+              <div className="space-y-4">
+                <div>
+                  <h3 className="body-sm font-semibold" style={{ 
+                    color: 'var(--color-text-secondary)', 
+                    marginBottom: 'var(--space-1)' 
+                  }}>
+                    Description
+                  </h3>
+                  <p className="body" style={{ color: 'var(--color-text-primary)' }}>
+                    {currentStepData.description}
+                  </p>
+                  
+                  {verboseMode && currentStepData.state && (
+                    <div style={{ 
+                      marginTop: 'var(--space-3)',
+                      padding: 'var(--space-3)',
+                      backgroundColor: 'var(--color-orange-100)',
+                      borderRadius: 'var(--radius-sm)',
+                    }}>
+                      <p className="body-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                        <strong>Array state:</strong> [{currentStepData.state.array.join(', ')}]
+                      </p>
+                      {currentStepData.state.comparing && (
+                        <p className="body-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                          <strong>Comparing indices:</strong> {currentStepData.state.comparing[0]} and {currentStepData.state.comparing[1]}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
 
-            {currentStepData.reason && (
-              <div>
-                <h3 className="body-sm font-semibold" style={{ 
-                  color: 'var(--color-text-secondary)', 
-                  marginBottom: 'var(--space-1)' 
-                }}>
-                  Why?
-                </h3>
-                <p className="body italic" style={{ color: 'var(--color-text-primary)' }}>
-                  {currentStepData.reason}
-                </p>
+                {currentStepData.reason && (
+                  <div>
+                    <h3 className="body-sm font-semibold" style={{ 
+                      color: 'var(--color-text-secondary)', 
+                      marginBottom: 'var(--space-1)' 
+                    }}>
+                      Why?
+                    </h3>
+                    <p className="body italic" style={{ color: 'var(--color-text-primary)' }}>
+                      {currentStepData.reason}
+                    </p>
+                  </div>
+                )}
+
+                {currentStepData.metadata && (
+                  <div className="flex gap-4 body-sm">
+                    {currentStepData.metadata.comparisons !== undefined && (
+                      <div>
+                        <span style={{ color: 'var(--color-text-secondary)' }}>Comparisons: </span>
+                        <span className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                          {currentStepData.metadata.comparisons}
+                        </span>
+                      </div>
+                    )}
+                    {currentStepData.metadata.swaps !== undefined && (
+                      <div>
+                        <span style={{ color: 'var(--color-text-secondary)' }}>Swaps: </span>
+                        <span className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+                          {currentStepData.metadata.swaps}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             )}
 
-            {currentStepData.metadata && (
-              <div className="flex gap-4 body-sm">
-                {currentStepData.metadata.comparisons !== undefined && (
-                  <div>
-                    <span style={{ color: 'var(--color-text-secondary)' }}>Comparisons: </span>
-                    <span className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>
-                      {currentStepData.metadata.comparisons}
-                    </span>
-                  </div>
-                )}
-                {currentStepData.metadata.swaps !== undefined && (
-                  <div>
-                    <span style={{ color: 'var(--color-text-secondary)' }}>Swaps: </span>
-                    <span className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>
-                      {currentStepData.metadata.swaps}
-                    </span>
-                  </div>
-                )}
+            {activeTab === 'pseudocode' && (
+              <div>
+                <PseudoCodeBlock 
+                  code={pseudocodeMap[algoId || 'bubble-sort'] || '// Pseudo-code not available'}
+                  highlightedLine={currentStepData.pseudocodeLine}
+                />
               </div>
             )}
           </div>
