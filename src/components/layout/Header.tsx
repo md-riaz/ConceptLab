@@ -29,6 +29,12 @@ export default function Header() {
               Learning Paths
             </Link>
             <Link 
+              to="/components" 
+              className="body text-text-secondary hover:text-accent-primary transition-colors no-underline"
+            >
+              Components
+            </Link>
+            <Link 
               to="/settings" 
               className="body text-text-secondary hover:text-accent-primary transition-colors no-underline"
             >
