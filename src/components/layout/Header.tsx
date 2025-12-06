@@ -3,60 +3,34 @@ import ThemeToggle from '../common/ThemeToggle';
 
 export default function Header() {
   return (
-    <header style={{
-      backgroundColor: 'var(--color-bg-surface)',
-      boxShadow: 'var(--shadow-sm)',
-      borderBottom: '1px solid var(--color-border-subtle)',
-    }}>
+    <header className="bg-bg-surface shadow-sm border-b border-gray-200">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           <div className="flex items-center">
             <Link 
               to="/" 
-              className="h2 font-bold transition-colors"
-              style={{ 
-                color: 'var(--color-accent-primary)',
-                textDecoration: 'none',
-              }}
+              className="h2 font-bold text-accent-primary hover:text-primary-600 transition-colors no-underline"
             >
               ConceptLab
             </Link>
           </div>
           
-          <div className="flex items-center" style={{ gap: 'var(--space-6)' }}>
+          <div className="flex items-center gap-6">
             <Link 
               to="/topics" 
-              className="body transition-colors"
-              style={{ 
-                color: 'var(--color-text-secondary)',
-                textDecoration: 'none',
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.color = 'var(--color-accent-primary)'}
-              onMouseLeave={(e) => e.currentTarget.style.color = 'var(--color-text-secondary)'}
+              className="body text-text-secondary hover:text-accent-primary transition-colors no-underline"
             >
               Topics
             </Link>
             <Link 
               to="/paths" 
-              className="body transition-colors"
-              style={{ 
-                color: 'var(--color-text-secondary)',
-                textDecoration: 'none',
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.color = 'var(--color-accent-primary)'}
-              onMouseLeave={(e) => e.currentTarget.style.color = 'var(--color-text-secondary)'}
+              className="body text-text-secondary hover:text-accent-primary transition-colors no-underline"
             >
               Learning Paths
             </Link>
             <Link 
               to="/settings" 
-              className="body transition-colors"
-              style={{ 
-                color: 'var(--color-text-secondary)',
-                textDecoration: 'none',
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.color = 'var(--color-accent-primary)'}
-              onMouseLeave={(e) => e.currentTarget.style.color = 'var(--color-text-secondary)'}
+              className="body text-text-secondary hover:text-accent-primary transition-colors no-underline"
             >
               Settings
             </Link>
