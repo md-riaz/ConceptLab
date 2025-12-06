@@ -153,8 +153,8 @@ export default function Settings() {
             
             {!showClearConfirm ? (
               <Button
+                variant="danger"
                 onClick={() => setShowClearConfirm(true)}
-                className="bg-red-500 hover:bg-red-600"
               >
                 🗑️ Clear All Progress
               </Button>
@@ -165,8 +165,8 @@ export default function Settings() {
                 </p>
                 <div className="flex gap-3">
                   <Button
+                    variant="danger"
                     onClick={handleClearProgress}
-                    className="bg-red-600 hover:bg-red-700"
                   >
                     Yes, Clear Everything
                   </Button>

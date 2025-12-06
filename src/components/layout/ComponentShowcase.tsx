@@ -3,6 +3,8 @@ import { Button, Card, Chip, Tabs, Slider } from '../common';
 
 export default function ComponentShowcase() {
   const [sliderValue, setSliderValue] = useState(50);
+  const [arraySize, setArraySize] = useState(25);
+  const [delay, setDelay] = useState(500);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -205,8 +207,8 @@ export default function ComponentShowcase() {
               min={5}
               max={50}
               step={5}
-              value={25}
-              onChange={() => {}}
+              value={arraySize}
+              onChange={setArraySize}
               showValue
             />
 
@@ -215,8 +217,8 @@ export default function ComponentShowcase() {
               min={100}
               max={2000}
               step={100}
-              value={500}
-              onChange={() => {}}
+              value={delay}
+              onChange={setDelay}
               showValue
               unit="ms"
             />

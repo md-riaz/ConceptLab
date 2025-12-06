@@ -1,6 +1,6 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost';
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -25,6 +25,7 @@ export default function Button({
     primary: 'bg-accent-primary text-white hover:bg-primary-600 disabled:hover:bg-accent-primary',
     secondary: 'bg-transparent border border-gray-200 text-text-primary hover:bg-primary-100 disabled:hover:bg-transparent',
     ghost: 'bg-transparent text-text-secondary hover:bg-gray-100 hover:text-text-primary disabled:hover:bg-transparent',
+    danger: 'bg-red-500 text-white hover:bg-red-600 disabled:hover:bg-red-500',
   };
   
   const sizeStyles = {
