@@ -35,7 +35,7 @@ export default function Home() {
                   <span className="text-2xl">{algo.icon}</span>
                 </div>
                 <div className="mb-3">
-                  <Chip variant={algo.chipVariant as any} size="sm">
+                  <Chip variant={algo.chipVariant as 'primary' | 'success'} size="sm">
                     {algo.category}
                   </Chip>
                 </div>

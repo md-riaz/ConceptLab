@@ -20,7 +20,7 @@ describe('Routing Tests - Checkpoint 1', () => {
     });
     
     render(<RouterProvider router={testRouter} />);
-    expect(screen.getByText('All Topics')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'All Topics', level: 1 })).toBeInTheDocument();
   });
 
   it('should render Topic detail page with slug parameter', () => {
@@ -29,7 +29,7 @@ describe('Routing Tests - Checkpoint 1', () => {
     });
     
     render(<RouterProvider router={testRouter} />);
-    expect(screen.getByText('Topic: bubble-sort')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Bubble Sort', level: 1 })).toBeInTheDocument();
   });
 
   it('should render Visualizer page with algoId parameter', () => {
@@ -48,7 +48,7 @@ describe('Routing Tests - Checkpoint 1', () => {
     });
     
     render(<RouterProvider router={testRouter} />);
-    expect(screen.getByText('Learning paths will be implemented in Checkpoint 6')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Learning Paths', level: 1 })).toBeInTheDocument();
   });
 
   it('should render Path detail page with pathId parameter', () => {
@@ -57,7 +57,7 @@ describe('Routing Tests - Checkpoint 1', () => {
     });
     
     render(<RouterProvider router={testRouter} />);
-    expect(screen.getByText('Path: dsa-beginner')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'DSA & CS Fundamentals Path', level: 1 })).toBeInTheDocument();
   });
 
   it('should render Settings page', () => {
@@ -66,7 +66,7 @@ describe('Routing Tests - Checkpoint 1', () => {
     });
     
     render(<RouterProvider router={testRouter} />);
-    expect(screen.getByText('Settings page will be implemented in Checkpoint 8')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Settings', level: 1 })).toBeInTheDocument();
   });
 
   it('should render Header and Footer on all pages', () => {
@@ -75,7 +75,7 @@ describe('Routing Tests - Checkpoint 1', () => {
     });
     
     render(<RouterProvider router={testRouter} />);
-    expect(screen.getByText('ConceptLab')).toBeInTheDocument();
-    expect(screen.getByText(/Built to help learners visualize/)).toBeInTheDocument();
+    expect(screen.getAllByText(/ConceptLab/)[0]).toBeInTheDocument();
+    expect(screen.getByText(/Built to help learners visualize abstract processes step-by-step/)).toBeInTheDocument();
   });
 });
