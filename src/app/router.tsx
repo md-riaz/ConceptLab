@@ -7,6 +7,7 @@ import Visualizer from '../components/visualizer/Visualizer';
 import PathsList from '../components/layout/PathsList';
 import PathDetail from '../components/layout/PathDetail';
 import Settings from '../components/layout/Settings';
+import ComponentShowcase from '../components/layout/ComponentShowcase';
 
 export const router = createBrowserRouter([
   {
@@ -40,6 +41,10 @@ export const router = createBrowserRouter([
       {
         path: 'settings',
         element: <Settings />,
+      },
+      {
+        path: 'components',
+        element: <ComponentShowcase />,
       },
     ],
   },

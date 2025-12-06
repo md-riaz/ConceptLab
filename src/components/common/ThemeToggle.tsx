@@ -17,15 +17,7 @@ export default function ThemeToggle() {
       <select
         value={theme}
         onChange={(e) => handleThemeChange(e.target.value as UserSettings['theme'])}
-        className="body-sm"
-        style={{
-          padding: 'var(--space-2) var(--space-3)',
-          backgroundColor: 'var(--color-bg-surface)',
-          color: 'var(--color-text-primary)',
-          border: '1px solid var(--color-border-subtle)',
-          borderRadius: 'var(--radius-sm)',
-          cursor: 'pointer',
-        }}
+        className="body-sm px-3 py-2 bg-bg-surface text-text-primary border border-gray-200 rounded-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-500/50"
         aria-label="Select theme"
       >
         <option value="light">☀️ Light</option>
