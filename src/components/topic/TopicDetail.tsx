@@ -117,10 +117,12 @@ export default function TopicDetail() {
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
       {/* Breadcrumb */}
       <nav className="mb-8">
-        <Link to="/topics">
-          <Button variant="ghost" size="sm">
-            ← Back to all topics
-          </Button>
+        <Link 
+          to="/topics"
+          className="inline-flex items-center justify-center font-medium transition-all duration-200 text-sm px-3 py-1.5 rounded-md text-text-secondary hover:bg-gray-100 hover:text-text-primary"
+          style={{ textDecoration: 'none' }}
+        >
+          ← Back to all topics
         </Link>
       </nav>
 

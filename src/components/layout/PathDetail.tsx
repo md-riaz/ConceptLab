@@ -63,10 +63,12 @@ export default function PathDetail() {
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
       {/* Breadcrumb */}
       <nav className="mb-8">
-        <Link to="/paths">
-          <Button variant="ghost" size="sm">
-            ← Back to all paths
-          </Button>
+        <Link 
+          to="/paths"
+          className="inline-flex items-center justify-center font-medium transition-all duration-200 text-sm px-3 py-1.5 rounded-md text-text-secondary hover:bg-gray-100 hover:text-text-primary"
+          style={{ textDecoration: 'none' }}
+        >
+          ← Back to all paths
         </Link>
       </nav>
 
@@ -200,19 +202,29 @@ export default function PathDetail() {
 
       {/* Completion Message */}
       {progress === 100 && (
-        <Card variant="elevated" padding="lg" className="mt-8 bg-green-50 border-2 border-green-500">
-          <div className="flex items-center gap-3">
-            <span className="text-5xl">🎉</span>
-            <div>
-              <h3 className="h3 text-green-900 mb-1">
-                Congratulations!
-              </h3>
-              <p className="body text-green-800">
-                You've completed the {path.title}! Keep learning and exploring more topics.
-              </p>
+        <div className="mt-8">
+          <Card 
+            variant="elevated" 
+            padding="lg" 
+            className="border-2"
+            style={{
+              backgroundColor: 'rgba(34, 197, 94, 0.1)',
+              borderColor: 'var(--color-green-500)'
+            }}
+          >
+            <div className="flex items-center gap-3">
+              <span className="text-5xl">🎉</span>
+              <div>
+                <h3 className="h3 mb-1" style={{ color: 'var(--color-green-500)' }}>
+                  Congratulations!
+                </h3>
+                <p className="body" style={{ color: 'var(--color-green-500)' }}>
+                  You've completed the {path.title}! Keep learning and exploring more topics.
+                </p>
+              </div>
             </div>
-          </div>
-        </Card>
+          </Card>
+        </div>
       )}
     </div>
   );

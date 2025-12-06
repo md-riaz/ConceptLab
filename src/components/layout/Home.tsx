@@ -35,7 +35,7 @@ export default function Home() {
                   <span className="text-2xl">{algo.icon}</span>
                 </div>
                 <div className="mb-3">
-                  <Chip variant={algo.chipVariant as 'primary' | 'success'} size="sm">
+                  <Chip variant={algo.chipVariant} size="sm">
                     {algo.category}
                   </Chip>
                 </div>
@@ -68,7 +68,14 @@ export default function Home() {
   );
 }
 
-const featuredAlgos = [
+const featuredAlgos: Array<{
+  id: string;
+  name: string;
+  category: string;
+  icon: string;
+  chipVariant: 'primary' | 'success';
+  description: string;
+}> = [
   {
     id: 'bubble-sort',
     name: 'Bubble Sort',
