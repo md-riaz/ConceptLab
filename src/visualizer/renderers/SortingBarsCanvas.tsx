@@ -15,29 +15,25 @@ export default function SortingBarsCanvas({ state, width = 800, height = 400 }: 
   const getBarColor = (index: number): string => {
     // Using design token colors for semantic meaning
     if (sorted.includes(index)) {
-      return 'bg-[var(--viz-bar-final)]'; // Sorted - green
+      return 'bg-[var(--viz-bar-final)]';
     }
     if (comparing && (comparing[0] === index || comparing[1] === index)) {
-      return 'bg-[var(--viz-bar-current)]'; // Comparing - orange
+      return 'bg-[var(--viz-bar-current)]';
     }
     if (swapping && (swapping[0] === index || swapping[1] === index)) {
-      return 'bg-[var(--viz-bar-comparison)]'; // Swapping - purple
+      return 'bg-[var(--viz-bar-comparison)]';
     }
-    return 'bg-[var(--viz-bar-default)]'; // Default - gray
+    return 'bg-[var(--viz-bar-default)]';
   };
 
   return (
-    <div 
-      className="relative rounded-md shadow-md border"
-      style={{ 
-        width: `${width}px`, 
+    <div
+      className="relative mx-auto w-full max-w-[900px] rounded-2xl border border-[var(--color-border-subtle)] bg-[linear-gradient(180deg,rgba(248,250,252,0.92),rgba(226,232,240,0.9))] p-6 shadow-[0_12px_40px_rgba(15,23,42,0.08)]"
+      style={{
+        maxWidth: `${width}px`,
         height: `${height}px`,
-        backgroundColor: 'var(--color-bg-surface)',
-        borderColor: 'var(--color-border-subtle)',
-        padding: 'var(--space-5)',
       }}
     >
-      {/* Canvas area */}
       <div className="absolute inset-5 flex items-end justify-center gap-1">
         {array.map((value, index) => {
           const barHeight = (value / maxValue) * (height - 80);

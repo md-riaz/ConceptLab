@@ -1,5 +1,5 @@
-import { useParams } from 'react-router-dom';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { VisualRunner } from '../../visualizer/engine/VisualRunner';
 import { BubbleSort } from '../../visualizer/algorithms/sorting/BubbleSort';
 import { InsertionSort } from '../../visualizer/algorithms/sorting/InsertionSort';
@@ -29,7 +29,19 @@ const allPseudocode = { ...pseudocodeMap, ...graphPseudocode, ...osPseudocode };
 
 export default function Visualizer() {
   const { algoId } = useParams();
+  const navigate = useNavigate();
   const algorithm = algorithms[algoId || 'bubble-sort'] || BubbleSort;
+
+  const pillClass =
+    'inline-flex items-center gap-2 rounded-full border border-[var(--color-border-subtle)] bg-[rgba(99,102,241,0.08)] px-3 py-2 text-sm font-semibold text-[var(--color-text-primary)] backdrop-blur';
+  const primaryButton =
+    'inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[var(--color-accent-primary)] to-[var(--color-primary-600)] px-4 py-3 text-sm font-semibold text-[var(--color-text-on-primary)] shadow-[0_12px_40px_rgba(99,102,241,0.25)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_48px_rgba(99,102,241,0.32)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-accent-primary)] disabled:opacity-60 disabled:hover:translate-y-0';
+  const outlineButton =
+    'inline-flex items-center justify-center gap-2 rounded-xl border border-[var(--color-border-subtle)] px-4 py-3 text-sm font-semibold text-[var(--color-text-primary)] transition hover:border-[var(--color-accent-primary)] hover:text-[var(--color-accent-primary)] disabled:opacity-60 disabled:hover:translate-y-0';
+  const ghostButton =
+    'inline-flex items-center justify-center gap-2 rounded-xl border border-[rgba(226,232,240,0.8)] bg-[rgba(226,232,240,0.6)] px-4 py-3 text-sm font-semibold text-[var(--color-text-primary)] transition hover:bg-[rgba(226,232,240,0.95)]';
+  const softButton =
+    'inline-flex items-center justify-center gap-2 rounded-xl border border-[rgba(168,85,247,0.2)] bg-[rgba(168,85,247,0.14)] px-4 py-3 text-sm font-semibold text-[var(--color-accent-secondary)] transition hover:bg-[rgba(168,85,247,0.22)]';
   
   const [arraySize, setArraySize] = useState(7);
   const [speed, setSpeed] = useState(500);
@@ -190,381 +202,276 @@ export default function Visualizer() {
     }
   }, [currentStep]);
 
+  const progress = totalSteps ? ((currentStep + 1) / totalSteps) * 100 : 0;
+
+  const statPills = useMemo(() => {
+    const chips = [
+      `Step ${currentStep + 1} of ${totalSteps || '…'}`,
+    ];
+
+    if (currentStepData?.metadata?.comparisons !== undefined) {
+      chips.push(`Comparisons: ${currentStepData.metadata.comparisons}`);
+    }
+    if (currentStepData?.metadata?.swaps !== undefined) {
+      chips.push(`Swaps: ${currentStepData.metadata.swaps}`);
+    }
+
+    return chips;
+  }, [currentStep, currentStepData?.metadata?.comparisons, currentStepData?.metadata?.swaps, totalSteps]);
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Header */}
-      <div style={{ marginBottom: 'var(--space-8)' }}>
-        <h1 className="h1" style={{ 
-          color: 'var(--color-text-primary)', 
-          marginBottom: 'var(--space-2)' 
-        }}>
-          Algorithm Visualizer
-        </h1>
-        <p className="body" style={{ color: 'var(--color-text-secondary)' }}>
-          Choose an algorithm, hit start, and watch each step play out in real time
-        </p>
-      </div>
-
-      {/* Control Panel */}
-      <div style={{
-        backgroundColor: 'var(--color-bg-surface)',
-        borderRadius: 'var(--radius-md)',
-        boxShadow: 'var(--shadow-md)',
-        padding: 'var(--space-6)',
-        marginBottom: 'var(--space-6)',
-        border: '1px solid var(--color-border-subtle)',
-      }}>
-        <h2 className="h3" style={{ 
-          color: 'var(--color-text-primary)', 
-          marginBottom: 'var(--space-4)' 
-        }}>Controls</h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Algorithm Selection */}
-          <div>
-            <label className="block body-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>
-              Algorithm
-            </label>
-            <select
-              className="w-full"
-              style={{
-                padding: 'var(--space-3) var(--space-4)',
-                border: '1px solid var(--color-border-subtle)',
-                borderRadius: 'var(--radius-sm)',
-                backgroundColor: 'var(--color-bg-surface)',
-                color: 'var(--color-text-primary)',
-                fontSize: 'var(--font-size-md)',
-              }}
-              value={algoId || 'bubble-sort'}
-              onChange={(e) => window.location.href = `/visualizer/${e.target.value}`}
-            >
-              <optgroup label="Sorting Algorithms">
-                <option value="bubble-sort">Bubble Sort</option>
-                <option value="insertion-sort">Insertion Sort</option>
-              </optgroup>
-              <optgroup label="Graph Algorithms">
-                <option value="bfs">Breadth-First Search (BFS)</option>
-                <option value="dfs">Depth-First Search (DFS)</option>
-              </optgroup>
-              <optgroup label="OS Scheduling">
-                <option value="round-robin">Round Robin</option>
-                <option value="sjf">Shortest Job First (SJF)</option>
-              </optgroup>
-            </select>
+    <div className="mx-auto max-w-7xl px-4 pb-12 pt-6 sm:px-6 lg:px-8">
+      <section className="relative overflow-hidden rounded-3xl border border-[var(--color-border-subtle)] bg-[radial-gradient(circle_at_20%_20%,rgba(99,102,241,0.1),transparent_35%),radial-gradient(circle_at_80%_10%,rgba(168,85,247,0.12),transparent_32%),linear-gradient(135deg,#f8fafc,#eef2ff)] px-6 py-8 shadow-2xl sm:px-10 sm:py-12">
+        <div className="relative grid items-center gap-6 sm:gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+          <div className="space-y-4">
+            <span className="inline-flex items-center gap-2 rounded-full bg-[rgba(99,102,241,0.1)] px-4 py-2 text-sm font-semibold tracking-wide text-[var(--color-accent-primary)]">Live, step-by-step learning</span>
+            <h1 className="text-3xl font-bold leading-tight text-[var(--color-text-primary)] sm:text-4xl">Algorithm Visualizer</h1>
+            <p className="max-w-3xl text-lg leading-7 text-[var(--color-text-secondary)]">
+              Choose an algorithm, press play, and watch every comparison, swap, and traversal unfold with calm, premium visuals.
+            </p>
+            <div className="flex flex-wrap items-center gap-3">
+              <span className={pillClass}>🎛️ {algorithm.name}</span>
+              <span className={pillClass}>⏱️ {speed}ms speed</span>
+              <span className={pillClass}>🧭 Step {Math.min(currentStep + 1, totalSteps || 1)} / {totalSteps || '…'}</span>
+            </div>
           </div>
 
-          {/* Array Size */}
-          <div>
-            <label className="block body-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>
-              Array Size: {arraySize}
-            </label>
-            <input
-              type="range"
-              min="3"
-              max="20"
-              value={arraySize}
-              onChange={(e) => setArraySize(parseInt(e.target.value))}
-              className="w-full accent-[var(--color-accent-primary)]"
-              style={{ height: '4px' }}
-            />
-          </div>
-
-          {/* Step Delay */}
-          <div>
-            <label className="block body-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>
-              Step Delay: {speed}ms
-            </label>
-            <input
-              type="range"
-              min="100"
-              max="2000"
-              step="100"
-              value={speed}
-              onChange={(e) => setSpeed(parseInt(e.target.value))}
-              className="w-full accent-[var(--color-accent-primary)]"
-              style={{ height: '4px' }}
-            />
-          </div>
-
-          {/* Custom Input */}
-          <div>
-            <label className="block body-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>
-              Custom Array (comma-separated)
-            </label>
-            <input
-              type="text"
-              placeholder="e.g., 23, 5, 7, 1, 9"
-              value={customInput}
-              onChange={(e) => setCustomInput(e.target.value)}
-              onKeyPress={(e) => {
-                if (e.key === 'Enter') {
-                  initializeVisualization();
-                }
-              }}
-              className="w-full"
-              style={{
-                padding: 'var(--space-3) var(--space-4)',
-                border: '1px solid var(--color-border-subtle)',
-                borderRadius: 'var(--radius-sm)',
-                backgroundColor: 'var(--color-bg-surface)',
-                color: 'var(--color-text-primary)',
-                fontSize: 'var(--font-size-md)',
-              }}
-            />
+          <div className="rounded-2xl border border-[rgba(226,232,240,0.9)] bg-white/80 p-6 shadow-xl backdrop-blur">
+            <h3 className="text-lg font-semibold text-[var(--color-text-primary)]">Comfort-first controls</h3>
+            <p className="mt-2 text-sm leading-6 text-[var(--color-text-secondary)]">
+              Space to play/pause, ⬅️ / ➡️ to scrub steps, R to restart, and S to stop. Built for smooth practice without friction.
+            </p>
+            <div className="mt-4 flex flex-wrap gap-3 text-sm font-semibold text-[var(--color-text-secondary)]">
+              <span className={pillClass}>⌨️ Keyboard friendly</span>
+              <span className={pillClass}>🌓 Theme aware</span>
+            </div>
           </div>
         </div>
+      </section>
 
-        {/* Transport Controls */}
-        <div className="mt-6 flex flex-wrap gap-3">
-          {!isPlaying ? (
-            <button
-              onClick={handleStart}
-              className="font-semibold transition-all"
-              style={{
-                padding: 'var(--space-3) var(--space-5)',
-                backgroundColor: 'var(--color-accent-primary)',
-                color: 'var(--color-text-on-primary)',
-                borderRadius: 'var(--radius-pill)',
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: 'var(--font-size-md)',
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--color-primary-600)'}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--color-accent-primary)'}
-            >
-              ▶ Start Visualization
+      <div className="mt-8 grid gap-6 lg:grid-cols-12">
+        <section className="rounded-2xl border border-[rgba(226,232,240,0.9)] bg-white/90 p-6 shadow-xl backdrop-blur lg:col-span-5">
+          <div className="flex items-center justify-between gap-3">
+            <div className="space-y-1">
+              <p className="inline-flex items-center gap-2 rounded-full bg-[rgba(99,102,241,0.1)] px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[var(--color-accent-primary)]">Control deck</p>
+              <h2 className="text-xl font-semibold text-[var(--color-text-primary)]">Curate your run</h2>
+            </div>
+            <span className={pillClass}>🎯 {algorithm.categoryId.toUpperCase()}</span>
+          </div>
+
+          <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-sm text-[var(--color-text-secondary)]">
+                <span>Algorithm</span>
+                <span className="caption">Switch instantly</span>
+              </div>
+              <select
+                className="w-full rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-3 py-2 text-sm font-semibold text-[var(--color-text-primary)] shadow-inner shadow-[rgba(0,0,0,0.02)] outline-none transition focus:border-[var(--color-accent-primary)] focus:shadow-[0_0_0_4px_rgba(99,102,241,0.12)]"
+                value={algoId || 'bubble-sort'}
+                onChange={(e) => navigate(`/visualizer/${e.target.value}`)}
+              >
+                <optgroup label="Sorting Algorithms">
+                  <option value="bubble-sort">Bubble Sort</option>
+                  <option value="insertion-sort">Insertion Sort</option>
+                </optgroup>
+                <optgroup label="Graph Algorithms">
+                  <option value="bfs">Breadth-First Search (BFS)</option>
+                  <option value="dfs">Depth-First Search (DFS)</option>
+                </optgroup>
+                <optgroup label="OS Scheduling">
+                  <option value="round-robin">Round Robin</option>
+                  <option value="sjf">Shortest Job First (SJF)</option>
+                </optgroup>
+              </select>
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-sm text-[var(--color-text-secondary)]">
+                <span>Array Size</span>
+                <span className="caption">{arraySize} bars</span>
+              </div>
+              <input
+                type="range"
+                min="3"
+                max="20"
+                value={arraySize}
+                onChange={(e) => setArraySize(parseInt(e.target.value))}
+                className="w-full accent-[var(--color-accent-primary)]"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-sm text-[var(--color-text-secondary)]">
+                <span>Step Delay</span>
+                <span className="caption">{speed}ms</span>
+              </div>
+              <input
+                type="range"
+                min="100"
+                max="2000"
+                step="100"
+                value={speed}
+                onChange={(e) => setSpeed(parseInt(e.target.value))}
+                className="w-full accent-[var(--color-accent-primary)]"
+              />
+            </div>
+
+            <div className="space-y-2 sm:col-span-2">
+              <div className="flex items-center justify-between text-sm text-[var(--color-text-secondary)]">
+                <span>Custom Array</span>
+                <span className="caption">Comma-separated</span>
+              </div>
+              <input
+                type="text"
+                placeholder="e.g., 23, 5, 7, 1, 9"
+                value={customInput}
+                onChange={(e) => setCustomInput(e.target.value)}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    initializeVisualization();
+                  }
+                }}
+                className="w-full rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-3 py-2 text-sm font-semibold text-[var(--color-text-primary)] shadow-inner shadow-[rgba(0,0,0,0.02)] outline-none transition focus:border-[var(--color-accent-primary)] focus:shadow-[0_0_0_4px_rgba(99,102,241,0.12)]"
+              />
+            </div>
+          </div>
+
+          <div className="mt-6 flex flex-wrap gap-3">
+            {!isPlaying ? (
+              <button onClick={handleStart} className={primaryButton}>
+                ▶ Start visualization
+              </button>
+            ) : (
+              <button onClick={handlePause} className={softButton}>
+                ⏸ Pause
+              </button>
+            )}
+
+            <button onClick={handleStop} className={ghostButton}>
+              ⏹ Stop / Reset
             </button>
-          ) : (
+
             <button
-              onClick={handlePause}
-              className="font-semibold transition-all"
-              style={{
-                padding: 'var(--space-3) var(--space-5)',
-                backgroundColor: 'var(--color-orange-500)',
-                color: 'var(--color-text-on-primary)',
-                borderRadius: 'var(--radius-pill)',
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: 'var(--font-size-md)',
-              }}
+              onClick={handlePrevious}
+              disabled={currentStep === 0}
+              className={outlineButton}
             >
-              ⏸ Pause
+              ◀ Previous
             </button>
+
+            <button
+              onClick={handleNext}
+              disabled={currentStep === totalSteps - 1}
+              className={outlineButton}
+            >
+              Next ▶
+            </button>
+
+            <button onClick={handleRestart} className={primaryButton}>
+              🔄 Restart
+            </button>
+          </div>
+        </section>
+
+        <section className="rounded-2xl border border-[var(--color-border-subtle)] bg-[linear-gradient(180deg,rgba(248,250,252,0.9),rgba(237,242,247,0.9))] p-6 shadow-lg lg:col-span-7">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div className="space-y-1">
+              <h2 className="text-xl font-semibold text-[var(--color-text-primary)]">Visualization</h2>
+              <p className="text-sm leading-6 text-[var(--color-text-secondary)]">
+                A calm, centered canvas that mirrors the premium look from the preview.
+              </p>
+            </div>
+            {currentStepData?.metadata?.label && <span className={pillClass}>{currentStepData.metadata.label}</span>}
+          </div>
+
+          {currentStepData && (
+            <div className="mt-4 space-y-4">
+              {algorithm.categoryId === 'sorting' && (
+                <div className="flex justify-center">
+                  <SortingBarsCanvas state={currentStepData.state} width={900} height={380} />
+                </div>
+              )}
+              {algorithm.categoryId === 'graph' && (
+                <GraphCanvas state={currentStepData.state} width={900} height={500} />
+              )}
+              {algorithm.categoryId === 'os' && <GanttChart state={currentStepData.state} />}
+            </div>
           )}
-          
-          <button
-            onClick={handleStop}
-            className="font-semibold transition-all"
-            style={{
-              padding: 'var(--space-3) var(--space-5)',
-              backgroundColor: 'var(--color-red-500)',
-              color: 'var(--color-text-on-primary)',
-              borderRadius: 'var(--radius-pill)',
-              border: 'none',
-              cursor: 'pointer',
-              fontSize: 'var(--font-size-md)',
-            }}
-          >
-            ⏹ Stop / Reset
-          </button>
-
-          <button
-            onClick={handlePrevious}
-            disabled={currentStep === 0}
-            className="font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{
-              padding: 'var(--space-3) var(--space-5)',
-              backgroundColor: 'transparent',
-              color: 'var(--color-text-primary)',
-              borderRadius: 'var(--radius-md)',
-              border: '1px solid var(--color-border-subtle)',
-              cursor: currentStep === 0 ? 'not-allowed' : 'pointer',
-              fontSize: 'var(--font-size-md)',
-            }}
-          >
-            ◀ Previous
-          </button>
-
-          <button
-            onClick={handleNext}
-            disabled={currentStep === totalSteps - 1}
-            className="font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{
-              padding: 'var(--space-3) var(--space-5)',
-              backgroundColor: 'transparent',
-              color: 'var(--color-text-primary)',
-              borderRadius: 'var(--radius-md)',
-              border: '1px solid var(--color-border-subtle)',
-              cursor: currentStep === totalSteps - 1 ? 'not-allowed' : 'pointer',
-              fontSize: 'var(--font-size-md)',
-            }}
-          >
-            Next ▶
-          </button>
-
-          <button
-            onClick={handleRestart}
-            className="font-semibold transition-all"
-            style={{
-              padding: 'var(--space-3) var(--space-5)',
-              backgroundColor: 'var(--color-accent-secondary)',
-              color: 'var(--color-text-on-primary)',
-              borderRadius: 'var(--radius-pill)',
-              border: 'none',
-              cursor: 'pointer',
-              fontSize: 'var(--font-size-md)',
-            }}
-          >
-            🔄 Restart
-          </button>
-        </div>
+        </section>
       </div>
 
-      {/* Visualization Canvas */}
-      <div style={{ marginBottom: 'var(--space-6)' }}>
-        <h2 className="h3" style={{ 
-          color: 'var(--color-text-primary)', 
-          marginBottom: 'var(--space-4)' 
-        }}>Visualization</h2>
-        {currentStepData && (
-          <>
-            {algorithm.categoryId === 'sorting' && (
-              <SortingBarsCanvas state={currentStepData.state} width={800} height={400} />
-            )}
-            {algorithm.categoryId === 'graph' && (
-              <GraphCanvas state={currentStepData.state} width={800} height={500} />
-            )}
-            {algorithm.categoryId === 'os' && (
-              <GanttChart state={currentStepData.state} />
-            )}
-          </>
-        )}
-      </div>
-
-      {/* Step Information */}
-      <div style={{
-        backgroundColor: 'var(--color-bg-surface)',
-        borderRadius: 'var(--radius-md)',
-        boxShadow: 'var(--shadow-md)',
-        padding: 'var(--space-6)',
-        border: '1px solid var(--color-border-subtle)',
-      }}>
-        <div className="flex items-center justify-between" style={{ marginBottom: 'var(--space-4)' }}>
-          <h2 className="h3" style={{ color: 'var(--color-text-primary)' }}>
-            Step Information
-          </h2>
-          <label className="flex items-center gap-2 body-sm" style={{ cursor: 'pointer' }}>
+      <section className="mt-6 rounded-2xl border border-[rgba(226,232,240,0.9)] bg-white/90 p-6 shadow-xl backdrop-blur">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="space-y-1">
+            <p className="inline-flex items-center gap-2 rounded-full bg-[rgba(99,102,241,0.1)] px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[var(--color-accent-primary)]">Guided walkthrough</p>
+            <h2 className="text-xl font-semibold text-[var(--color-text-primary)]">Step information</h2>
+          </div>
+          <label className={`${pillClass} cursor-pointer select-none`}>
             <input
               type="checkbox"
               checked={verboseMode}
               onChange={(e) => setVerboseMode(e.target.checked)}
-              style={{ cursor: 'pointer' }}
+              className="h-4 w-4 accent-[var(--color-accent-primary)]"
             />
-            <span style={{ color: 'var(--color-text-secondary)' }}>Verbose Mode</span>
+            Verbose mode
           </label>
         </div>
 
-        {/* Tabs */}
-        <div style={{ 
-          borderBottom: '1px solid var(--color-border-subtle)',
-          marginBottom: 'var(--space-4)',
-          display: 'flex',
-          gap: 'var(--space-4)',
-        }}>
-          <button
-            onClick={() => setActiveTab('explanation')}
-            className="body-sm font-medium transition-colors"
-            style={{
-              padding: 'var(--space-2) var(--space-4)',
-              color: activeTab === 'explanation' ? 'var(--color-text-primary)' : 'var(--color-text-secondary)',
-              borderBottom: activeTab === 'explanation' ? '2px solid var(--color-accent-secondary)' : '2px solid transparent',
-              backgroundColor: 'transparent',
-              border: 'none',
-              cursor: 'pointer',
-            }}
-          >
-            Explanation
-          </button>
-          <button
-            onClick={() => setActiveTab('pseudocode')}
-            className="body-sm font-medium transition-colors"
-            style={{
-              padding: 'var(--space-2) var(--space-4)',
-              color: activeTab === 'pseudocode' ? 'var(--color-text-primary)' : 'var(--color-text-secondary)',
-              borderBottom: activeTab === 'pseudocode' ? '2px solid var(--color-accent-secondary)' : '2px solid transparent',
-              backgroundColor: 'transparent',
-              border: 'none',
-              cursor: 'pointer',
-            }}
-          >
-            Pseudo-code
-          </button>
-        </div>
-
-        <div style={{ marginBottom: 'var(--space-4)' }}>
-          <div className="flex items-center justify-between" style={{ marginBottom: 'var(--space-2)' }}>
-            <span className="caption font-medium" style={{ color: 'var(--color-text-secondary)' }}>
-              Step {currentStep + 1} of {totalSteps}
-            </span>
-            {currentStepData?.metadata?.label && (
-              <span style={{
-                padding: 'var(--space-1) var(--space-3)',
-                backgroundColor: 'var(--color-bg-chip)',
-                color: 'var(--color-accent-primary)',
-                borderRadius: 'var(--radius-pill)',
-                fontSize: 'var(--font-size-sm)',
-                fontWeight: 600,
-              }}>
-                {currentStepData.metadata.label}
-              </span>
-            )}
+        <div className="mt-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="space-y-3">
+            <div className="flex flex-wrap items-center gap-3 text-sm font-semibold text-[var(--color-text-secondary)]">
+              {statPills.map((label) => (
+                <span key={label} className={pillClass}>
+                  {label}
+                </span>
+              ))}
+            </div>
+            <div className="h-2 w-full rounded-full bg-[rgba(226,232,240,0.8)]">
+              <div
+                className="h-2 rounded-full bg-gradient-to-r from-[var(--color-accent-primary)] to-[var(--color-accent-secondary)] transition-[width] duration-300"
+                style={{ width: `${progress}%` }}
+              ></div>
+            </div>
           </div>
-          
-          {/* Progress bar */}
-          <div className="w-full" style={{
-            backgroundColor: 'var(--viz-bar-default)',
-            borderRadius: 'var(--radius-pill)',
-            height: '4px',
-          }}>
-            <div
-              className="transition-all duration-300"
-              style={{ 
-                width: `${((currentStep + 1) / totalSteps) * 100}%`,
-                backgroundColor: 'var(--color-accent-primary)',
-                height: '4px',
-                borderRadius: 'var(--radius-pill)',
-              }}
-            ></div>
+          <div className="inline-flex items-center gap-2 rounded-2xl bg-[rgba(226,232,240,0.6)] p-1 text-sm font-semibold text-[var(--color-text-secondary)]">
+            <button
+              onClick={() => setActiveTab('explanation')}
+              className={`rounded-xl px-4 py-2 transition ${
+                activeTab === 'explanation'
+                  ? 'bg-white text-[var(--color-text-primary)] shadow-md'
+                  : 'hover:text-[var(--color-text-primary)]'
+              }`}
+            >
+              Explanation
+            </button>
+            <button
+              onClick={() => setActiveTab('pseudocode')}
+              className={`rounded-xl px-4 py-2 transition ${
+                activeTab === 'pseudocode'
+                  ? 'bg-white text-[var(--color-text-primary)] shadow-md'
+                  : 'hover:text-[var(--color-text-primary)]'
+              }`}
+            >
+              Pseudo-code
+            </button>
           </div>
         </div>
 
         {currentStepData && (
-          <div>
+          <div className="mt-4">
             {activeTab === 'explanation' && (
-              <div className="space-y-4">
-                <div>
-                  <h3 className="body-sm font-semibold" style={{ 
-                    color: 'var(--color-text-secondary)', 
-                    marginBottom: 'var(--space-1)' 
-                  }}>
-                    Description
-                  </h3>
-                  <p className="body" style={{ color: 'var(--color-text-primary)' }}>
-                    {currentStepData.description}
-                  </p>
-                  
+              <div className="space-y-5">
+                <div className="space-y-2">
+                  <h3 className="text-sm font-semibold text-[var(--color-text-secondary)]">Description</h3>
+                  <p className="text-base leading-7 text-[var(--color-text-primary)]">{currentStepData.description}</p>
+
                   {verboseMode && currentStepData.state && (
-                    <div style={{ 
-                      marginTop: 'var(--space-3)',
-                      padding: 'var(--space-3)',
-                      backgroundColor: 'var(--color-orange-100)',
-                      borderRadius: 'var(--radius-sm)',
-                    }}>
-                      <p className="body-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                    <div className="mt-2 space-y-2 rounded-lg bg-[var(--color-orange-100)] px-3 py-2 text-sm text-[var(--color-text-secondary)]">
+                      <p>
                         <strong>Array state:</strong> [{currentStepData.state.array.join(', ')}]
                       </p>
                       {currentStepData.state.comparing && (
-                        <p className="body-sm" style={{ color: 'var(--color-text-secondary)' }}>
+                        <p>
                           <strong>Comparing indices:</strong> {currentStepData.state.comparing[0]} and {currentStepData.state.comparing[1]}
                         </p>
                       )}
@@ -573,37 +480,9 @@ export default function Visualizer() {
                 </div>
 
                 {currentStepData.reason && (
-                  <div>
-                    <h3 className="body-sm font-semibold" style={{ 
-                      color: 'var(--color-text-secondary)', 
-                      marginBottom: 'var(--space-1)' 
-                    }}>
-                      Why?
-                    </h3>
-                    <p className="body italic" style={{ color: 'var(--color-text-primary)' }}>
-                      {currentStepData.reason}
-                    </p>
-                  </div>
-                )}
-
-                {currentStepData.metadata && (
-                  <div className="flex gap-4 body-sm">
-                    {currentStepData.metadata.comparisons !== undefined && (
-                      <div>
-                        <span style={{ color: 'var(--color-text-secondary)' }}>Comparisons: </span>
-                        <span className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>
-                          {currentStepData.metadata.comparisons}
-                        </span>
-                      </div>
-                    )}
-                    {currentStepData.metadata.swaps !== undefined && (
-                      <div>
-                        <span style={{ color: 'var(--color-text-secondary)' }}>Swaps: </span>
-                        <span className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>
-                          {currentStepData.metadata.swaps}
-                        </span>
-                      </div>
-                    )}
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-semibold text-[var(--color-text-secondary)]">Why?</h3>
+                    <p className="italic text-base leading-7 text-[var(--color-text-primary)]">{currentStepData.reason}</p>
                   </div>
                 )}
               </div>
@@ -611,7 +490,7 @@ export default function Visualizer() {
 
             {activeTab === 'pseudocode' && (
               <div>
-                <PseudoCodeBlock 
+                <PseudoCodeBlock
                   code={(allPseudocode as Record<string, string>)[algoId || 'bubble-sort'] || '// Pseudo-code not available'}
                   highlightedLine={currentStepData.pseudocodeLine}
                 />
@@ -619,7 +498,7 @@ export default function Visualizer() {
             )}
           </div>
         )}
-      </div>
+      </section>
     </div>
   );
 }
