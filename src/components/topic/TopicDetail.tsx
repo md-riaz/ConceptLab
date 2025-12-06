@@ -1,5 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { useState } from 'react';
+import { Card, Chip, Button } from '../common';
 import categories from '../../content/categories.json';
 import bubbleSortTopic from '../../content/topics/bubble-sort.json';
 import insertionSortTopic from '../../content/topics/insertion-sort.json';
@@ -22,11 +23,11 @@ const allTopics: Topic[] = [
   sjfTopic as Topic,
 ];
 
-const difficultyColors = {
-  easy: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
-  medium: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
-  hard: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
-};
+const difficultyVariant = {
+  easy: 'success',
+  medium: 'warning',
+  hard: 'danger',
+} as const;
 
 // Simple markdown-to-JSX converter for basic formatting
 function renderMarkdown(markdown: string) {
@@ -92,16 +93,20 @@ export default function TopicDetail() {
 
   if (!topic) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h1 className="h1 text-gray-900 dark:text-white mb-4">
-          Topic Not Found
-        </h1>
-        <p className="body text-gray-600 dark:text-gray-300 mb-6">
-          The topic you're looking for doesn't exist.
-        </p>
-        <Link to="/topics" className="text-indigo-600 dark:text-indigo-400 hover:underline">
-          ← Back to all topics
-        </Link>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <Card padding="lg">
+          <h1 className="h1 text-text-primary mb-4">
+            Topic Not Found
+          </h1>
+          <p className="body text-text-secondary mb-6">
+            The topic you're looking for doesn't exist.
+          </p>
+          <Link to="/topics">
+            <Button variant="secondary" size="md">
+              ← Back to all topics
+            </Button>
+          </Link>
+        </Card>
       </div>
     );
   }
@@ -109,18 +114,22 @@ export default function TopicDetail() {
   const category = (categories as Category[]).find(c => c.id === topic.categoryId);
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
       {/* Breadcrumb */}
       <nav className="mb-8">
-        <Link to="/topics" className="text-indigo-600 dark:text-indigo-400 hover:underline">
+        <Link 
+          to="/topics"
+          className="inline-flex items-center justify-center font-medium transition-all duration-200 text-sm px-3 py-1.5 rounded-md text-text-secondary hover:bg-gray-100 hover:text-text-primary"
+          style={{ textDecoration: 'none' }}
+        >
           ← Back to all topics
         </Link>
       </nav>
 
       {/* Header */}
-      <div className="mb-8">
+      <Card variant="elevated" padding="lg" className="mb-8">
         <div className="flex items-start justify-between mb-4">
-          <h1 className="h1 text-gray-900 dark:text-white">
+          <h1 className="h1 text-text-primary">
             {topic.title}
           </h1>
           {progress === 'completed' && (
@@ -131,18 +140,22 @@ export default function TopicDetail() {
         {/* Meta info */}
         <div className="flex flex-wrap items-center gap-3 mb-4">
           {category && (
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200">
-              <span className="mr-1.5">{category.icon}</span>
+            <Chip variant="primary" size="md">
+              <span className="mr-1">{category.icon}</span>
               {category.name}
-            </span>
+            </Chip>
           )}
-          <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold ${difficultyColors[topic.difficulty]}`}>
+          <Chip variant={difficultyVariant[topic.difficulty]} size="md">
             {topic.difficulty.toUpperCase()}
-          </span>
+          </Chip>
           {topic.tags.map((tag) => (
             <span
               key={tag}
-              className="inline-block px-2.5 py-1 text-sm rounded bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
+              className="inline-block px-2.5 py-1 text-sm rounded"
+              style={{
+                backgroundColor: 'var(--color-gray-100)',
+                color: 'var(--color-text-secondary)'
+              }}
             >
               #{tag}
             </span>
@@ -150,38 +163,37 @@ export default function TopicDetail() {
         </div>
 
         {/* Summary */}
-        <p className="body text-gray-700 dark:text-gray-300 mb-6">
+        <p className="body text-text-secondary mb-6">
           {topic.summary}
         </p>
 
         {/* CTA */}
         {topic.visualAlgorithmId && (
-          <Link
-            to={`/visualizer/${topic.visualAlgorithmId}`}
-            className="inline-block px-6 py-3 bg-indigo-500 text-white rounded-full font-semibold hover:bg-indigo-600 transition-colors"
-          >
-            🎨 Open in Visualizer
+          <Link to={`/visualizer/${topic.visualAlgorithmId}`}>
+            <Button variant="primary" size="md">
+              🎨 Open in Visualizer
+            </Button>
           </Link>
         )}
-      </div>
+      </Card>
 
       {/* Sections */}
-      <div className="space-y-8">
+      <div className="space-y-6">
         {topic.sections.map((section) => (
-          <section key={section.id} className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-            <h2 className="h2 text-gray-900 dark:text-white mb-4">
+          <Card key={section.id} variant="elevated" padding="lg">
+            <h2 className="h2 text-text-primary mb-4">
               {section.title}
             </h2>
             <div className="prose dark:prose-invert max-w-none">
               {renderMarkdown(section.contentMarkdown)}
             </div>
-          </section>
+          </Card>
         ))}
       </div>
 
       {/* Related Topics */}
-      <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700">
-        <h3 className="h3 text-gray-900 dark:text-white mb-4">
+      <div className="mt-12">
+        <h3 className="h3 text-text-primary mb-4">
           More in {category?.name}
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -189,17 +201,15 @@ export default function TopicDetail() {
             .filter(t => t.categoryId === topic.categoryId && t.id !== topic.id)
             .slice(0, 2)
             .map((relatedTopic) => (
-              <Link
-                key={relatedTopic.id}
-                to={`/topics/${relatedTopic.slug}`}
-                className="block p-4 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-              >
-                <h4 className="h4 text-gray-900 dark:text-white mb-2">
-                  {relatedTopic.title}
-                </h4>
-                <p className="body-sm text-gray-600 dark:text-gray-400">
-                  {relatedTopic.summary.slice(0, 100)}...
-                </p>
+              <Link key={relatedTopic.id} to={`/topics/${relatedTopic.slug}`}>
+                <Card hover padding="md">
+                  <h4 className="h4 text-text-primary mb-2">
+                    {relatedTopic.title}
+                  </h4>
+                  <p className="body-sm text-text-secondary">
+                    {relatedTopic.summary.slice(0, 100)}...
+                  </p>
+                </Card>
               </Link>
             ))}
         </div>

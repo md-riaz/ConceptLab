@@ -1,98 +1,111 @@
 import { Link } from 'react-router-dom';
+import { Button, Card, Chip } from '../common';
 
 export default function Home() {
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
       {/* Hero Section */}
-      <div className="text-center mb-16">
-        <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-4">
+      <div className="text-center mb-20">
+        <h1 className="h1 text-text-primary mb-6" style={{ fontSize: '3.5rem' }}>
           Algorithm Visualizer
         </h1>
-        <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
+        <p className="text-2xl text-text-secondary mb-10 max-w-3xl mx-auto">
           Watch every concept step out in real time
         </p>
-        <Link
-          to="/visualizer/bubble-sort"
-          className="inline-block bg-primary-600 hover:bg-primary-700 text-white font-semibold px-8 py-3 rounded-lg transition-colors shadow-lg"
-        >
-          Try the Algorithm Visualizer
+        <Link to="/visualizer/bubble-sort">
+          <Button variant="primary" size="lg">
+            🎨 Try the Algorithm Visualizer
+          </Button>
         </Link>
       </div>
 
       {/* Featured Algorithms */}
-      <div className="mb-16">
-        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
+      <div className="mb-20">
+        <h2 className="h2 text-text-primary mb-8">
           Featured Algorithms
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {featuredAlgos.map((algo) => (
-            <Link
-              key={algo.id}
-              to={`/visualizer/${algo.id}`}
-              className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow border border-gray-200 dark:border-gray-700"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  {algo.name}
-                </h3>
-                <span className={`px-2 py-1 text-xs rounded ${algo.color}`}>
-                  {algo.category}
-                </span>
-              </div>
-              <p className="text-gray-600 dark:text-gray-300 text-sm">
-                {algo.description}
-              </p>
+            <Link key={algo.id} to={`/visualizer/${algo.id}`}>
+              <Card hover padding="lg" className="h-full">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="h4 text-text-primary">
+                    {algo.name}
+                  </h3>
+                  <span className="text-2xl">{algo.icon}</span>
+                </div>
+                <div className="mb-3">
+                  <Chip variant={algo.chipVariant} size="sm">
+                    {algo.category}
+                  </Chip>
+                </div>
+                <p className="body-sm text-text-secondary">
+                  {algo.description}
+                </p>
+              </Card>
             </Link>
           ))}
         </div>
       </div>
 
       {/* Learning Paths Teaser */}
-      <div className="bg-gradient-to-r from-primary-50 to-secondary-50 dark:from-gray-800 dark:to-gray-700 rounded-lg p-8">
-        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-          Learning Paths
-        </h2>
-        <p className="text-gray-700 dark:text-gray-300 mb-6">
-          Follow structured paths to master algorithms and data structures
-        </p>
-        <Link
-          to="/paths"
-          className="inline-block bg-white dark:bg-gray-800 text-primary-600 dark:text-primary-400 font-semibold px-6 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-        >
-          Explore Learning Paths →
-        </Link>
-      </div>
+      <Card variant="elevated" padding="lg" className="bg-gradient-to-br from-primary-100 to-purple-100">
+        <div className="max-w-2xl">
+          <h2 className="h2 text-text-primary mb-4">
+            Learning Paths
+          </h2>
+          <p className="body text-text-secondary mb-6">
+            Follow structured paths to master algorithms and data structures step by step
+          </p>
+          <Link to="/paths">
+            <Button variant="secondary" size="md">
+              📚 Explore Learning Paths →
+            </Button>
+          </Link>
+        </div>
+      </Card>
     </div>
   );
 }
 
-const featuredAlgos = [
+const featuredAlgos: Array<{
+  id: string;
+  name: string;
+  category: string;
+  icon: string;
+  chipVariant: 'primary' | 'success';
+  description: string;
+}> = [
   {
     id: 'bubble-sort',
     name: 'Bubble Sort',
     category: 'Sorting',
-    color: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
+    icon: '🔃',
+    chipVariant: 'primary',
     description: 'Simple comparison-based sorting algorithm',
   },
   {
     id: 'merge-sort',
     name: 'Merge Sort',
     category: 'Sorting',
-    color: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
+    icon: '🔃',
+    chipVariant: 'primary',
     description: 'Efficient divide-and-conquer sorting',
   },
   {
     id: 'dijkstra',
     name: 'Dijkstra\'s Algorithm',
     category: 'Graph',
-    color: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+    icon: '🕸️',
+    chipVariant: 'success',
     description: 'Find shortest paths in weighted graphs',
   },
   {
     id: 'dfs',
     name: 'Depth-First Search',
     category: 'Graph',
-    color: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
+    icon: '🕸️',
+    chipVariant: 'success',
     description: 'Explore graphs depth-first',
   },
 ];
