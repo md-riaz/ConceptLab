@@ -1,5 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { useState } from 'react';
+import { Card, Button } from '../common';
 import dsaBeginnerPath from '../../content/paths/dsa-beginner.json';
 import bubbleSortTopic from '../../content/topics/bubble-sort.json';
 import insertionSortTopic from '../../content/topics/insertion-sort.json';
@@ -32,16 +33,20 @@ export default function PathDetail() {
 
   if (!path) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h1 className="h1 text-gray-900 dark:text-white mb-4">
-          Path Not Found
-        </h1>
-        <p className="body text-gray-600 dark:text-gray-300 mb-6">
-          The learning path you're looking for doesn't exist.
-        </p>
-        <Link to="/paths" className="text-indigo-600 dark:text-indigo-400 hover:underline">
-          ← Back to all paths
-        </Link>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <Card padding="lg">
+          <h1 className="h1 text-text-primary mb-4">
+            Path Not Found
+          </h1>
+          <p className="body text-text-secondary mb-6">
+            The learning path you're looking for doesn't exist.
+          </p>
+          <Link to="/paths">
+            <Button variant="secondary" size="md">
+              ← Back to all paths
+            </Button>
+          </Link>
+        </Card>
       </div>
     );
   }
@@ -55,53 +60,58 @@ export default function PathDetail() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
       {/* Breadcrumb */}
       <nav className="mb-8">
-        <Link to="/paths" className="text-indigo-600 dark:text-indigo-400 hover:underline">
-          ← Back to all paths
+        <Link to="/paths">
+          <Button variant="ghost" size="sm">
+            ← Back to all paths
+          </Button>
         </Link>
       </nav>
 
       {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-start gap-4 mb-4">
-          <div className="text-5xl">📚</div>
+      <Card variant="elevated" padding="lg" className="mb-8">
+        <div className="flex items-start gap-4 mb-6">
+          <div className="text-6xl">📚</div>
           <div className="flex-1">
-            <h1 className="h1 text-gray-900 dark:text-white mb-2">
+            <h1 className="h1 text-text-primary mb-2">
               {path.title}
             </h1>
-            <p className="body text-gray-600 dark:text-gray-300">
+            <p className="body text-text-secondary">
               {path.description}
             </p>
           </div>
         </div>
 
         {/* Progress */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+        <div className="pt-4 border-t" style={{ borderColor: 'var(--color-border-subtle)' }}>
           <div className="flex items-center justify-between mb-3">
-            <span className="body font-semibold text-gray-900 dark:text-white">
+            <span className="body font-semibold text-text-primary">
               Your Progress
             </span>
-            <span className="body font-semibold text-indigo-600 dark:text-indigo-400">
+            <span className="body font-semibold" style={{ color: 'var(--color-accent-primary)' }}>
               {completedCount} / {path.topicIds.length} completed
             </span>
           </div>
-          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 mb-2">
+          <div className="w-full rounded-full h-3 mb-2" style={{ backgroundColor: 'var(--color-gray-200)' }}>
             <div
-              className="bg-indigo-500 h-3 rounded-full transition-all duration-300"
-              style={{ width: `${progress}%` }}
+              className="h-3 rounded-full transition-all duration-300"
+              style={{ 
+                width: `${progress}%`,
+                backgroundColor: 'var(--color-accent-primary)'
+              }}
             ></div>
           </div>
-          <div className="text-sm text-gray-600 dark:text-gray-400 text-right">
+          <div className="text-sm text-text-secondary text-right">
             {progress}% complete
           </div>
         </div>
-      </div>
+      </Card>
 
       {/* Topics List */}
       <div className="space-y-4">
-        <h2 className="h2 text-gray-900 dark:text-white mb-4">
+        <h2 className="h2 text-text-primary mb-6">
           Topics in This Path
         </h2>
         
@@ -111,11 +121,11 @@ export default function PathDetail() {
           
           if (!topic) {
             return (
-              <div key={topicId} className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4">
-                <p className="text-gray-600 dark:text-gray-400">
+              <Card key={topicId} padding="md">
+                <p className="text-text-secondary">
                   Topic "{topicId}" not found
                 </p>
-              </div>
+              </Card>
             );
           }
 
@@ -128,15 +138,13 @@ export default function PathDetail() {
           const config = statusConfig[status as keyof typeof statusConfig];
 
           return (
-            <div
-              key={topicId}
-              className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 hover:shadow-md transition-shadow"
-            >
+            <Card key={topicId} hover variant="elevated" padding="lg">
               {/* Header */}
               <div className="flex items-start gap-4">
                 {/* Number */}
-                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center">
-                  <span className="text-lg font-bold text-indigo-600 dark:text-indigo-400">
+                <div className="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center"
+                  style={{ backgroundColor: 'var(--color-primary-100)', color: 'var(--color-accent-primary)' }}>
+                  <span className="text-lg font-bold">
                     {index + 1}
                   </span>
                 </div>
@@ -144,7 +152,7 @@ export default function PathDetail() {
                 {/* Content */}
                 <div className="flex-1">
                   <div className="flex items-start justify-between mb-2">
-                    <h3 className="h3 text-gray-900 dark:text-white">
+                    <h3 className="h3 text-text-primary">
                       {topic.title}
                     </h3>
                     <span className={`text-2xl ${config.color}`} title={config.label}>
@@ -152,59 +160,59 @@ export default function PathDetail() {
                     </span>
                   </div>
 
-                  <p className="body-sm text-gray-600 dark:text-gray-300 mb-4">
+                  <p className="body-sm text-text-secondary mb-4">
                     {topic.summary}
                   </p>
 
                   {/* Actions */}
                   <div className="flex flex-wrap gap-3">
-                    <Link
-                      to={`/topics/${topic.slug}`}
-                      className="inline-block px-4 py-2 bg-indigo-500 text-white rounded-full text-sm font-semibold hover:bg-indigo-600 transition-colors"
-                    >
-                      📖 Learn More
+                    <Link to={`/topics/${topic.slug}`}>
+                      <Button variant="primary" size="sm">
+                        📖 Learn More
+                      </Button>
                     </Link>
                     
                     {topic.visualAlgorithmId && (
-                      <Link
-                        to={`/visualizer/${topic.visualAlgorithmId}`}
-                        className="inline-block px-4 py-2 bg-purple-500 text-white rounded-full text-sm font-semibold hover:bg-purple-600 transition-colors"
-                      >
-                        🎨 Visualize
+                      <Link to={`/visualizer/${topic.visualAlgorithmId}`}>
+                        <Button variant="secondary" size="sm">
+                          🎨 Visualize
+                        </Button>
                       </Link>
                     )}
 
                     {status !== 'completed' && (
-                      <button
+                      <Button
                         onClick={() => handleMarkCompleted(topicId)}
-                        className="inline-block px-4 py-2 border-2 border-green-500 text-green-700 dark:text-green-400 rounded-full text-sm font-semibold hover:bg-green-50 dark:hover:bg-green-900 transition-colors"
+                        variant="ghost"
+                        size="sm"
+                        className="border-2 border-green-500 text-green-700 hover:bg-green-50"
                       >
                         ✓ Mark as Completed
-                      </button>
+                      </Button>
                     )}
                   </div>
                 </div>
               </div>
-            </div>
+            </Card>
           );
         })}
       </div>
 
       {/* Completion Message */}
       {progress === 100 && (
-        <div className="mt-8 bg-green-50 dark:bg-green-900 rounded-lg p-6 border-2 border-green-500">
+        <Card variant="elevated" padding="lg" className="mt-8 bg-green-50 border-2 border-green-500">
           <div className="flex items-center gap-3">
-            <span className="text-4xl">🎉</span>
+            <span className="text-5xl">🎉</span>
             <div>
-              <h3 className="h3 text-green-900 dark:text-green-100 mb-1">
+              <h3 className="h3 text-green-900 mb-1">
                 Congratulations!
               </h3>
-              <p className="body text-green-800 dark:text-green-200">
+              <p className="body text-green-800">
                 You've completed the {path.title}! Keep learning and exploring more topics.
               </p>
             </div>
           </div>
-        </div>
+        </Card>
       )}
     </div>
   );
