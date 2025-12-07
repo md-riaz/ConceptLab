@@ -221,7 +221,7 @@ export default function Visualizer() {
               <div className="flex flex-wrap gap-3 text-sm">
                 <span className="inline-flex items-center gap-2 rounded-full border border-[var(--color-border-strong)]/60 bg-[var(--color-bg-app)] px-4 py-2 font-semibold text-[var(--color-text-primary)] shadow-sm">
                   <span className="h-2 w-2 rounded-full bg-[var(--color-accent-secondary)]"></span>
-                  {algorithm.displayName || 'Algorithm'}
+                  {algorithm.name || 'Algorithm'}
                 </span>
                 <span className="inline-flex items-center gap-2 rounded-full border border-[var(--color-border-subtle)] px-4 py-2 text-[var(--color-text-secondary)]">
                   Space · Play / Pause
