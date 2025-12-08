@@ -30,7 +30,8 @@ const allPseudocode = { ...pseudocodeMap, ...graphPseudocode, ...osPseudocode };
 export default function Visualizer() {
   const { algoId } = useParams();
   const navigate = useNavigate();
-  const algorithm = algorithms[algoId || 'bubble-sort'] || BubbleSort;
+  const effectiveAlgoId = algoId && algorithms[algoId] ? algoId : 'bubble-sort';
+  const algorithm = algorithms[effectiveAlgoId];
   
   const [arraySize, setArraySize] = useState(7);
   const [speed, setSpeed] = useState(500);
@@ -203,10 +204,10 @@ export default function Visualizer() {
 
       <div className="relative mx-auto max-w-6xl space-y-8 px-4 pt-10 lg:px-6">
         {/* Header */}
-        <section className="rounded-3xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)]/80 shadow-[0_24px_70px_rgba(15,23,42,0.18)] backdrop-blur-xl">
+        <section className="rounded-3xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)]/80 shadow-premium backdrop-blur-xl">
           <div className="grid gap-10 p-8 md:grid-cols-[1.2fr,1fr] md:items-center">
             <div className="space-y-6">
-              <div className="inline-flex items-center gap-2 rounded-full bg-[var(--color-bg-chip)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--color-text-secondary)]">
+              <div className="inline-flex items-center gap-2 rounded-full bg-[var(--color-bg-chip)] px-3 py-1 text-xs font-semibold uppercase tracking-premium text-[var(--color-text-secondary)]">
                 <span className="inline-flex h-2 w-2 rounded-full bg-[var(--color-accent-primary)]"></span>
                 Live algorithm studio
               </div>
@@ -248,7 +249,7 @@ export default function Visualizer() {
                   <span className="inline-flex items-center gap-2 rounded-full bg-[var(--color-bg-chip)] px-3 py-1 text-xs font-semibold text-[var(--color-accent-primary)]">
                     {algorithm.categoryId.toUpperCase()}
                   </span>
-                  <div className="text-xs text-[var(--color-text-secondary)]">{speed}ms delay · size {arraySize}</div>
+                  <div className="text-xs text-[var(--color-text-secondary)]">{speed}ms delay{algorithm.categoryId === 'sorting' ? ` · size ${arraySize}` : ''}</div>
                 </div>
               </div>
 
@@ -260,10 +261,12 @@ export default function Visualizer() {
               </div>
 
               <div className="mt-5 grid grid-cols-2 gap-3 text-sm text-[var(--color-text-secondary)]">
-                <div className="rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-3 py-2">
-                  <p className="text-xs uppercase tracking-[0.12em]">Array size</p>
-                  <p className="text-lg font-semibold text-[var(--color-text-primary)]">{arraySize}</p>
-                </div>
+                {algorithm.categoryId === 'sorting' && (
+                  <div className="rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-3 py-2">
+                    <p className="text-xs uppercase tracking-[0.12em]">Array size</p>
+                    <p className="text-lg font-semibold text-[var(--color-text-primary)]">{arraySize}</p>
+                  </div>
+                )}
                 <div className="rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-3 py-2">
                   <p className="text-xs uppercase tracking-[0.12em]">Step delay</p>
                   <p className="text-lg font-semibold text-[var(--color-text-primary)]">{speed} ms</p>
@@ -274,7 +277,7 @@ export default function Visualizer() {
         </section>
 
         {/* Controls */}
-        <section className="rounded-2xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] shadow-[0_16px_52px_rgba(15,23,42,0.14)] p-6 space-y-6">
+        <section className="rounded-2xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] shadow-panel p-6 space-y-6">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div>
               <p className="text-sm uppercase tracking-[0.12em] text-[var(--color-text-secondary)]">Setup</p>
@@ -284,7 +287,8 @@ export default function Visualizer() {
             <div className="flex flex-wrap gap-2 text-xs text-[var(--color-text-secondary)]">
               <span className="rounded-full border border-[var(--color-border-subtle)] px-3 py-1">Space = Play/Pause</span>
               <span className="rounded-full border border-[var(--color-border-subtle)] px-3 py-1">← / → = Step</span>
-              <span className="rounded-full border border-[var(--color-border-subtle)] px-3 py-1">R / S = Reset</span>
+              <span className="rounded-full border border-[var(--color-border-subtle)] px-3 py-1">R = Restart</span>
+              <span className="rounded-full border border-[var(--color-border-subtle)] px-3 py-1">S = Stop</span>
             </div>
           </div>
 
@@ -293,7 +297,7 @@ export default function Visualizer() {
               <label className="text-sm font-medium text-[var(--color-text-secondary)]">Algorithm</label>
               <select
                 className="w-full rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-app)] px-4 py-3 text-[var(--color-text-primary)] shadow-inner"
-                value={algoId || 'bubble-sort'}
+                value={effectiveAlgoId}
                 onChange={(e) => navigate(`/visualizer/${e.target.value}`)}
               >
                 <optgroup label="Sorting Algorithms">
@@ -311,17 +315,19 @@ export default function Visualizer() {
               </select>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-[var(--color-text-secondary)]">Array Size: {arraySize}</label>
-              <input
-                type="range"
-                min="3"
-                max="20"
-                value={arraySize}
-                onChange={(e) => setArraySize(parseInt(e.target.value))}
-                className="h-2 w-full rounded-full bg-[var(--color-border-subtle)] accent-[var(--color-accent-primary)]"
-              />
-            </div>
+            {algorithm.categoryId === 'sorting' && (
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-[var(--color-text-secondary)]">Array Size: {arraySize}</label>
+                <input
+                  type="range"
+                  min="3"
+                  max="20"
+                  value={arraySize}
+                  onChange={(e) => setArraySize(parseInt(e.target.value))}
+                  className="h-2 w-full rounded-full bg-[var(--color-border-subtle)] accent-[var(--color-accent-primary)]"
+                />
+              </div>
+            )}
 
             <div className="space-y-2">
               <label className="text-sm font-medium text-[var(--color-text-secondary)]">Step Delay: {speed}ms</label>
@@ -336,21 +342,23 @@ export default function Visualizer() {
               />
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-[var(--color-text-secondary)]">Custom Array (comma-separated)</label>
-              <input
-                type="text"
-                placeholder="e.g., 23, 5, 7, 1, 9"
-                value={customInput}
-                onChange={(e) => setCustomInput(e.target.value)}
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
-                    initializeVisualization();
-                  }
-                }}
-                className="w-full rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-app)] px-4 py-3 text-[var(--color-text-primary)] shadow-inner placeholder:text-[var(--color-text-secondary)]"
-              />
-            </div>
+            {algorithm.categoryId === 'sorting' && (
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-[var(--color-text-secondary)]">Custom Array (comma-separated)</label>
+                <input
+                  type="text"
+                  placeholder="e.g., 23, 5, 7, 1, 9"
+                  value={customInput}
+                  onChange={(e) => setCustomInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      initializeVisualization();
+                    }
+                  }}
+                  className="w-full rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-app)] px-4 py-3 text-[var(--color-text-primary)] shadow-inner placeholder:text-[var(--color-text-secondary)]"
+                />
+              </div>
+            )}
           </div>
 
           <div className="flex flex-wrap gap-3">
@@ -372,7 +380,7 @@ export default function Visualizer() {
 
             <button
               onClick={handleStop}
-              className="flex items-center gap-2 rounded-full border border-[var(--color-border-subtle)] bg-[var(--color-bg-app)] px-6 py-3 text-sm font-semibold text-[var(--color-text-primary)] shadow-sm transition hover:-translate-y-0.5"
+              className="flex items-center gap-2 rounded-full border border-red-200 bg-red-50 px-6 py-3 text-sm font-semibold text-red-700 shadow-sm transition hover:-translate-y-0.5 hover:bg-red-100"
             >
               ⏹ Stop / Reset
             </button>
@@ -403,7 +411,7 @@ export default function Visualizer() {
         </section>
 
         {/* Visualization */}
-        <section className="rounded-2xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] shadow-[0_16px_52px_rgba(15,23,42,0.16)] p-6 space-y-5">
+        <section className="rounded-2xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] shadow-panel-strong p-6 space-y-5">
           <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
             <div>
               <h3 className="text-xl font-semibold text-[var(--color-text-primary)]">Live visualization</h3>
@@ -433,7 +441,7 @@ export default function Visualizer() {
         </section>
 
         {/* Step information */}
-        <section className="rounded-2xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] shadow-[0_16px_52px_rgba(15,23,42,0.14)] p-6 space-y-5">
+        <section className="rounded-2xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] shadow-panel p-6 space-y-5">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div>
               <h3 className="text-xl font-semibold text-[var(--color-text-primary)]">Step intelligence</h3>
@@ -456,7 +464,7 @@ export default function Visualizer() {
                 {currentStep + 1}
               </span>
               <div>
-                <p className="text-xs uppercase tracking-[0.18em] text-[var(--color-text-secondary)]">Step</p>
+                <p className="text-xs uppercase tracking-premium text-[var(--color-text-secondary)]">Step</p>
                 <p className="text-base font-semibold text-[var(--color-text-primary)]">{currentStep + 1} of {totalSteps || 1}</p>
               </div>
             </div>
@@ -513,13 +521,27 @@ export default function Visualizer() {
                       Description
                     </div>
                     <p className="text-[var(--color-text-primary)] leading-relaxed">{currentStepData.description}</p>
-                    {verboseMode && currentStepData.state && (
+                    {verboseMode &&
+                      algorithm.categoryId === 'sorting' &&
+                      currentStepData.state &&
+                      'array' in currentStepData.state &&
+                      Array.isArray((currentStepData.state as { array: unknown }).array) && (
                       <div className="rounded-lg bg-[var(--color-bg-chip)] px-3 py-3 text-sm text-[var(--color-text-secondary)]">
                         <p className="font-semibold text-[var(--color-text-primary)]">State snapshot</p>
-                        <p className="mt-1">[{currentStepData.state.array.join(', ')}]</p>
-                        {currentStepData.state.comparing && (
-                          <p className="mt-1">Comparing indices: {currentStepData.state.comparing[0]} and {currentStepData.state.comparing[1]}</p>
-                        )}
+                        {(() => {
+                          const { array, comparing } = currentStepData.state as {
+                            array: number[];
+                            comparing?: [number, number];
+                          };
+                          return (
+                            <>
+                              <p className="mt-1">[{array.join(', ')}]</p>
+                              {comparing && (
+                                <p className="mt-1">Comparing indices: {comparing[0]} and {comparing[1]}</p>
+                              )}
+                            </>
+                          );
+                        })()}
                       </div>
                     )}
                   </div>
@@ -537,7 +559,7 @@ export default function Visualizer() {
               {activeTab === 'pseudocode' && (
                 <div className="rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-app)] p-5 shadow-inner">
                   <PseudoCodeBlock
-                    code={(allPseudocode as Record<string, string>)[algoId || 'bubble-sort'] || '// Pseudo-code not available'}
+                    code={(allPseudocode as Record<string, string>)[effectiveAlgoId] || '// Pseudo-code not available'}
                     highlightedLine={currentStepData.pseudocodeLine}
                   />
                 </div>
