@@ -65,6 +65,9 @@ export default {
         sans: ['system-ui', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif'],
         mono: ['"JetBrains Mono"', '"Fira Code"', 'Consolas', 'Monaco', '"Courier New"', 'monospace'],
       },
+      letterSpacing: {
+        premium: '0.18em',
+      },
       fontSize: {
         xs: '12px',
         sm: '14px',
@@ -98,6 +101,9 @@ export default {
         DEFAULT: '0 4px 10px rgba(15, 23, 42, 0.08)',
         md: '0 4px 10px rgba(15, 23, 42, 0.08)',
         lg: '0 10px 30px rgba(15, 23, 42, 0.18)',
+        premium: '0 24px 70px rgba(15, 23, 42, 0.18)',
+        panel: '0 16px 52px rgba(15, 23, 42, 0.14)',
+        'panel-strong': '0 16px 52px rgba(15, 23, 42, 0.16)',
         'focus-ring': '0 0 0 3px rgba(99, 102, 241, 0.5)',
       },
     },

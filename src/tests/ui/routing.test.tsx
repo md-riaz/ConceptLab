@@ -36,10 +36,11 @@ describe('Routing Tests - Checkpoint 1', () => {
     const testRouter = createMemoryRouter(router.routes, {
       initialEntries: ['/visualizer/bubble-sort'],
     });
-    
+
     render(<RouterProvider router={testRouter} />);
-    expect(screen.getByText('Choose an algorithm, hit start, and watch each step play out in real time')).toBeInTheDocument();
-    expect(screen.getByText('Controls')).toBeInTheDocument();
+    expect(screen.getByText(/Premium Algorithm Visualizer/i)).toBeInTheDocument();
+    expect(screen.getByText(/Balance clarity and calm while you experiment/i)).toBeInTheDocument();
+    expect(screen.getByText(/Shape your run/i)).toBeInTheDocument();
   });
 
   it('should render Paths list page', () => {

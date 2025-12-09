@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { VisualRunner } from '../../visualizer/engine/VisualRunner';
 import { BubbleSort } from '../../visualizer/algorithms/sorting/BubbleSort';
@@ -29,7 +29,9 @@ const allPseudocode = { ...pseudocodeMap, ...graphPseudocode, ...osPseudocode };
 
 export default function Visualizer() {
   const { algoId } = useParams();
-  const algorithm = algorithms[algoId || 'bubble-sort'] || BubbleSort;
+  const navigate = useNavigate();
+  const effectiveAlgoId = algoId && algorithms[algoId] ? algoId : 'bubble-sort';
+  const algorithm = algorithms[effectiveAlgoId];
   
   const [arraySize, setArraySize] = useState(7);
   const [speed, setSpeed] = useState(500);
@@ -190,435 +192,381 @@ export default function Visualizer() {
     }
   }, [currentStep]);
 
+  const progressPercent = totalSteps ? ((currentStep + 1) / totalSteps) * 100 : 0;
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Header */}
-      <div style={{ marginBottom: 'var(--space-8)' }}>
-        <h1 className="h1" style={{ 
-          color: 'var(--color-text-primary)', 
-          marginBottom: 'var(--space-2)' 
-        }}>
-          Algorithm Visualizer
-        </h1>
-        <p className="body" style={{ color: 'var(--color-text-secondary)' }}>
-          Choose an algorithm, hit start, and watch each step play out in real time
-        </p>
+    <div className="relative min-h-screen overflow-hidden bg-[var(--color-bg-app)] pb-14">
+      <div className="pointer-events-none absolute inset-0 opacity-80">
+        <div className="absolute -left-20 top-[-10%] h-80 w-80 rounded-full bg-gradient-to-br from-[var(--color-accent-primary)]/20 via-transparent to-transparent blur-3xl"></div>
+        <div className="absolute bottom-0 right-[-10%] h-96 w-96 rounded-full bg-gradient-to-tr from-[var(--color-accent-secondary)]/20 via-transparent to-transparent blur-3xl"></div>
+        <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-[var(--color-bg-app)] to-transparent" />
       </div>
 
-      {/* Control Panel */}
-      <div style={{
-        backgroundColor: 'var(--color-bg-surface)',
-        borderRadius: 'var(--radius-md)',
-        boxShadow: 'var(--shadow-md)',
-        padding: 'var(--space-6)',
-        marginBottom: 'var(--space-6)',
-        border: '1px solid var(--color-border-subtle)',
-      }}>
-        <h2 className="h3" style={{ 
-          color: 'var(--color-text-primary)', 
-          marginBottom: 'var(--space-4)' 
-        }}>Controls</h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Algorithm Selection */}
-          <div>
-            <label className="block body-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>
-              Algorithm
-            </label>
-            <select
-              className="w-full"
-              style={{
-                padding: 'var(--space-3) var(--space-4)',
-                border: '1px solid var(--color-border-subtle)',
-                borderRadius: 'var(--radius-sm)',
-                backgroundColor: 'var(--color-bg-surface)',
-                color: 'var(--color-text-primary)',
-                fontSize: 'var(--font-size-md)',
-              }}
-              value={algoId || 'bubble-sort'}
-              onChange={(e) => window.location.href = `/visualizer/${e.target.value}`}
-            >
-              <optgroup label="Sorting Algorithms">
-                <option value="bubble-sort">Bubble Sort</option>
-                <option value="insertion-sort">Insertion Sort</option>
-              </optgroup>
-              <optgroup label="Graph Algorithms">
-                <option value="bfs">Breadth-First Search (BFS)</option>
-                <option value="dfs">Depth-First Search (DFS)</option>
-              </optgroup>
-              <optgroup label="OS Scheduling">
-                <option value="round-robin">Round Robin</option>
-                <option value="sjf">Shortest Job First (SJF)</option>
-              </optgroup>
-            </select>
-          </div>
+      <div className="relative mx-auto max-w-6xl space-y-8 px-4 pt-10 lg:px-6">
+        {/* Header */}
+        <section className="rounded-3xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)]/80 shadow-premium backdrop-blur-xl">
+          <div className="grid gap-10 p-8 md:grid-cols-[1.2fr,1fr] md:items-center">
+            <div className="space-y-6">
+              <div className="inline-flex items-center gap-2 rounded-full bg-[var(--color-bg-chip)] px-3 py-1 text-xs font-semibold uppercase tracking-premium text-[var(--color-text-secondary)]">
+                <span className="inline-flex h-2 w-2 rounded-full bg-[var(--color-accent-primary)]"></span>
+                Live algorithm studio
+              </div>
 
-          {/* Array Size */}
-          <div>
-            <label className="block body-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>
-              Array Size: {arraySize}
-            </label>
-            <input
-              type="range"
-              min="3"
-              max="20"
-              value={arraySize}
-              onChange={(e) => setArraySize(parseInt(e.target.value))}
-              className="w-full accent-[var(--color-accent-primary)]"
-              style={{ height: '4px' }}
-            />
-          </div>
-
-          {/* Step Delay */}
-          <div>
-            <label className="block body-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>
-              Step Delay: {speed}ms
-            </label>
-            <input
-              type="range"
-              min="100"
-              max="2000"
-              step="100"
-              value={speed}
-              onChange={(e) => setSpeed(parseInt(e.target.value))}
-              className="w-full accent-[var(--color-accent-primary)]"
-              style={{ height: '4px' }}
-            />
-          </div>
-
-          {/* Custom Input */}
-          <div>
-            <label className="block body-sm font-medium mb-2" style={{ color: 'var(--color-text-secondary)' }}>
-              Custom Array (comma-separated)
-            </label>
-            <input
-              type="text"
-              placeholder="e.g., 23, 5, 7, 1, 9"
-              value={customInput}
-              onChange={(e) => setCustomInput(e.target.value)}
-              onKeyPress={(e) => {
-                if (e.key === 'Enter') {
-                  initializeVisualization();
-                }
-              }}
-              className="w-full"
-              style={{
-                padding: 'var(--space-3) var(--space-4)',
-                border: '1px solid var(--color-border-subtle)',
-                borderRadius: 'var(--radius-sm)',
-                backgroundColor: 'var(--color-bg-surface)',
-                color: 'var(--color-text-primary)',
-                fontSize: 'var(--font-size-md)',
-              }}
-            />
-          </div>
-        </div>
-
-        {/* Transport Controls */}
-        <div className="mt-6 flex flex-wrap gap-3">
-          {!isPlaying ? (
-            <button
-              onClick={handleStart}
-              className="font-semibold transition-all"
-              style={{
-                padding: 'var(--space-3) var(--space-5)',
-                backgroundColor: 'var(--color-accent-primary)',
-                color: 'var(--color-text-on-primary)',
-                borderRadius: 'var(--radius-pill)',
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: 'var(--font-size-md)',
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--color-primary-600)'}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--color-accent-primary)'}
-            >
-              ▶ Start Visualization
-            </button>
-          ) : (
-            <button
-              onClick={handlePause}
-              className="font-semibold transition-all"
-              style={{
-                padding: 'var(--space-3) var(--space-5)',
-                backgroundColor: 'var(--color-orange-500)',
-                color: 'var(--color-text-on-primary)',
-                borderRadius: 'var(--radius-pill)',
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: 'var(--font-size-md)',
-              }}
-            >
-              ⏸ Pause
-            </button>
-          )}
-          
-          <button
-            onClick={handleStop}
-            className="font-semibold transition-all"
-            style={{
-              padding: 'var(--space-3) var(--space-5)',
-              backgroundColor: 'var(--color-red-500)',
-              color: 'var(--color-text-on-primary)',
-              borderRadius: 'var(--radius-pill)',
-              border: 'none',
-              cursor: 'pointer',
-              fontSize: 'var(--font-size-md)',
-            }}
-          >
-            ⏹ Stop / Reset
-          </button>
-
-          <button
-            onClick={handlePrevious}
-            disabled={currentStep === 0}
-            className="font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{
-              padding: 'var(--space-3) var(--space-5)',
-              backgroundColor: 'transparent',
-              color: 'var(--color-text-primary)',
-              borderRadius: 'var(--radius-md)',
-              border: '1px solid var(--color-border-subtle)',
-              cursor: currentStep === 0 ? 'not-allowed' : 'pointer',
-              fontSize: 'var(--font-size-md)',
-            }}
-          >
-            ◀ Previous
-          </button>
-
-          <button
-            onClick={handleNext}
-            disabled={currentStep === totalSteps - 1}
-            className="font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{
-              padding: 'var(--space-3) var(--space-5)',
-              backgroundColor: 'transparent',
-              color: 'var(--color-text-primary)',
-              borderRadius: 'var(--radius-md)',
-              border: '1px solid var(--color-border-subtle)',
-              cursor: currentStep === totalSteps - 1 ? 'not-allowed' : 'pointer',
-              fontSize: 'var(--font-size-md)',
-            }}
-          >
-            Next ▶
-          </button>
-
-          <button
-            onClick={handleRestart}
-            className="font-semibold transition-all"
-            style={{
-              padding: 'var(--space-3) var(--space-5)',
-              backgroundColor: 'var(--color-accent-secondary)',
-              color: 'var(--color-text-on-primary)',
-              borderRadius: 'var(--radius-pill)',
-              border: 'none',
-              cursor: 'pointer',
-              fontSize: 'var(--font-size-md)',
-            }}
-          >
-            🔄 Restart
-          </button>
-        </div>
-      </div>
-
-      {/* Visualization Canvas */}
-      <div style={{ marginBottom: 'var(--space-6)' }}>
-        <h2 className="h3" style={{ 
-          color: 'var(--color-text-primary)', 
-          marginBottom: 'var(--space-4)' 
-        }}>Visualization</h2>
-        {currentStepData && (
-          <>
-            {algorithm.categoryId === 'sorting' && (
-              <SortingBarsCanvas state={currentStepData.state} width={800} height={400} />
-            )}
-            {algorithm.categoryId === 'graph' && (
-              <GraphCanvas state={currentStepData.state} width={800} height={500} />
-            )}
-            {algorithm.categoryId === 'os' && (
-              <GanttChart state={currentStepData.state} />
-            )}
-          </>
-        )}
-      </div>
-
-      {/* Step Information */}
-      <div style={{
-        backgroundColor: 'var(--color-bg-surface)',
-        borderRadius: 'var(--radius-md)',
-        boxShadow: 'var(--shadow-md)',
-        padding: 'var(--space-6)',
-        border: '1px solid var(--color-border-subtle)',
-      }}>
-        <div className="flex items-center justify-between" style={{ marginBottom: 'var(--space-4)' }}>
-          <h2 className="h3" style={{ color: 'var(--color-text-primary)' }}>
-            Step Information
-          </h2>
-          <label className="flex items-center gap-2 body-sm" style={{ cursor: 'pointer' }}>
-            <input
-              type="checkbox"
-              checked={verboseMode}
-              onChange={(e) => setVerboseMode(e.target.checked)}
-              style={{ cursor: 'pointer' }}
-            />
-            <span style={{ color: 'var(--color-text-secondary)' }}>Verbose Mode</span>
-          </label>
-        </div>
-
-        {/* Tabs */}
-        <div style={{ 
-          borderBottom: '1px solid var(--color-border-subtle)',
-          marginBottom: 'var(--space-4)',
-          display: 'flex',
-          gap: 'var(--space-4)',
-        }}>
-          <button
-            onClick={() => setActiveTab('explanation')}
-            className="body-sm font-medium transition-colors"
-            style={{
-              padding: 'var(--space-2) var(--space-4)',
-              color: activeTab === 'explanation' ? 'var(--color-text-primary)' : 'var(--color-text-secondary)',
-              borderBottom: activeTab === 'explanation' ? '2px solid var(--color-accent-secondary)' : '2px solid transparent',
-              backgroundColor: 'transparent',
-              border: 'none',
-              cursor: 'pointer',
-            }}
-          >
-            Explanation
-          </button>
-          <button
-            onClick={() => setActiveTab('pseudocode')}
-            className="body-sm font-medium transition-colors"
-            style={{
-              padding: 'var(--space-2) var(--space-4)',
-              color: activeTab === 'pseudocode' ? 'var(--color-text-primary)' : 'var(--color-text-secondary)',
-              borderBottom: activeTab === 'pseudocode' ? '2px solid var(--color-accent-secondary)' : '2px solid transparent',
-              backgroundColor: 'transparent',
-              border: 'none',
-              cursor: 'pointer',
-            }}
-          >
-            Pseudo-code
-          </button>
-        </div>
-
-        <div style={{ marginBottom: 'var(--space-4)' }}>
-          <div className="flex items-center justify-between" style={{ marginBottom: 'var(--space-2)' }}>
-            <span className="caption font-medium" style={{ color: 'var(--color-text-secondary)' }}>
-              Step {currentStep + 1} of {totalSteps}
-            </span>
-            {currentStepData?.metadata?.label && (
-              <span style={{
-                padding: 'var(--space-1) var(--space-3)',
-                backgroundColor: 'var(--color-bg-chip)',
-                color: 'var(--color-accent-primary)',
-                borderRadius: 'var(--radius-pill)',
-                fontSize: 'var(--font-size-sm)',
-                fontWeight: 600,
-              }}>
-                {currentStepData.metadata.label}
-              </span>
-            )}
-          </div>
-          
-          {/* Progress bar */}
-          <div className="w-full" style={{
-            backgroundColor: 'var(--viz-bar-default)',
-            borderRadius: 'var(--radius-pill)',
-            height: '4px',
-          }}>
-            <div
-              className="transition-all duration-300"
-              style={{ 
-                width: `${((currentStep + 1) / totalSteps) * 100}%`,
-                backgroundColor: 'var(--color-accent-primary)',
-                height: '4px',
-                borderRadius: 'var(--radius-pill)',
-              }}
-            ></div>
-          </div>
-        </div>
-
-        {currentStepData && (
-          <div>
-            {activeTab === 'explanation' && (
               <div className="space-y-4">
-                <div>
-                  <h3 className="body-sm font-semibold" style={{ 
-                    color: 'var(--color-text-secondary)', 
-                    marginBottom: 'var(--space-1)' 
-                  }}>
-                    Description
-                  </h3>
-                  <p className="body" style={{ color: 'var(--color-text-primary)' }}>
-                    {currentStepData.description}
+                <h1 className="text-4xl font-bold text-[var(--color-text-primary)]">Premium Algorithm Visualizer</h1>
+                <p className="max-w-3xl text-lg leading-relaxed text-[var(--color-text-secondary)]">
+                  Balance clarity and calm while you experiment. Choose an algorithm, tune the pacing, and glide through each step with polished controls and responsive visuals.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap gap-3 text-sm">
+                <span className="inline-flex items-center gap-2 rounded-full border border-[var(--color-border-strong)]/60 bg-[var(--color-bg-app)] px-4 py-2 font-semibold text-[var(--color-text-primary)] shadow-sm">
+                  <span className="h-2 w-2 rounded-full bg-[var(--color-accent-secondary)]"></span>
+                  {algorithm.name || 'Algorithm'}
+                </span>
+                <span className="inline-flex items-center gap-2 rounded-full border border-[var(--color-border-subtle)] px-4 py-2 text-[var(--color-text-secondary)]">
+                  Space · Play / Pause
+                </span>
+                <span className="inline-flex items-center gap-2 rounded-full border border-[var(--color-border-subtle)] px-4 py-2 text-[var(--color-text-secondary)]">
+                  ← / → · Step
+                </span>
+                <span className="inline-flex items-center gap-2 rounded-full border border-[var(--color-border-subtle)] px-4 py-2 text-[var(--color-text-secondary)]">
+                  R · Restart · S · Stop
+                </span>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-app)]/90 p-6 shadow-inner">
+              <div className="flex items-start justify-between gap-4">
+                <div className="space-y-1">
+                  <p className="text-sm text-[var(--color-text-secondary)]">Run progress</p>
+                  <p className="text-4xl font-semibold text-[var(--color-text-primary)]">
+                    {Math.min(currentStep + 1, totalSteps)}
+                    <span className="text-lg text-[var(--color-text-secondary)]"> / {totalSteps || 1}</span>
                   </p>
-                  
-                  {verboseMode && currentStepData.state && (
-                    <div style={{ 
-                      marginTop: 'var(--space-3)',
-                      padding: 'var(--space-3)',
-                      backgroundColor: 'var(--color-orange-100)',
-                      borderRadius: 'var(--radius-sm)',
-                    }}>
-                      <p className="body-sm" style={{ color: 'var(--color-text-secondary)' }}>
-                        <strong>Array state:</strong> [{currentStepData.state.array.join(', ')}]
-                      </p>
-                      {currentStepData.state.comparing && (
-                        <p className="body-sm" style={{ color: 'var(--color-text-secondary)' }}>
-                          <strong>Comparing indices:</strong> {currentStepData.state.comparing[0]} and {currentStepData.state.comparing[1]}
-                        </p>
-                      )}
-                    </div>
-                  )}
                 </div>
+                <div className="space-y-2 text-right">
+                  <span className="inline-flex items-center gap-2 rounded-full bg-[var(--color-bg-chip)] px-3 py-1 text-xs font-semibold text-[var(--color-accent-primary)]">
+                    {algorithm.categoryId.toUpperCase()}
+                  </span>
+                  <div className="text-xs text-[var(--color-text-secondary)]">{speed}ms delay{algorithm.categoryId === 'sorting' ? ` · size ${arraySize}` : ''}</div>
+                </div>
+              </div>
 
-                {currentStepData.reason && (
-                  <div>
-                    <h3 className="body-sm font-semibold" style={{ 
-                      color: 'var(--color-text-secondary)', 
-                      marginBottom: 'var(--space-1)' 
-                    }}>
-                      Why?
-                    </h3>
-                    <p className="body italic" style={{ color: 'var(--color-text-primary)' }}>
-                      {currentStepData.reason}
-                    </p>
+              <div className="mt-5 h-2 w-full overflow-hidden rounded-full bg-[var(--color-border-subtle)]">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-[var(--color-accent-primary)] via-[var(--color-accent-secondary)] to-[var(--color-accent-primary)] transition-all"
+                  style={{ width: `${progressPercent}%` }}
+                ></div>
+              </div>
+
+              <div className="mt-5 grid grid-cols-2 gap-3 text-sm text-[var(--color-text-secondary)]">
+                {algorithm.categoryId === 'sorting' && (
+                  <div className="rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-3 py-2">
+                    <p className="text-xs uppercase tracking-[0.12em]">Array size</p>
+                    <p className="text-lg font-semibold text-[var(--color-text-primary)]">{arraySize}</p>
                   </div>
                 )}
+                <div className="rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-3 py-2">
+                  <p className="text-xs uppercase tracking-[0.12em]">Step delay</p>
+                  <p className="text-lg font-semibold text-[var(--color-text-primary)]">{speed} ms</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
 
-                {currentStepData.metadata && (
-                  <div className="flex gap-4 body-sm">
-                    {currentStepData.metadata.comparisons !== undefined && (
-                      <div>
-                        <span style={{ color: 'var(--color-text-secondary)' }}>Comparisons: </span>
-                        <span className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>
-                          {currentStepData.metadata.comparisons}
-                        </span>
-                      </div>
-                    )}
-                    {currentStepData.metadata.swaps !== undefined && (
-                      <div>
-                        <span style={{ color: 'var(--color-text-secondary)' }}>Swaps: </span>
-                        <span className="font-semibold" style={{ color: 'var(--color-text-primary)' }}>
-                          {currentStepData.metadata.swaps}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                )}
+        {/* Controls */}
+        <section className="rounded-2xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] shadow-panel p-6 space-y-6">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="text-sm uppercase tracking-[0.12em] text-[var(--color-text-secondary)]">Setup</p>
+              <h2 className="text-2xl font-semibold text-[var(--color-text-primary)]">Shape your run</h2>
+              <p className="text-sm text-[var(--color-text-secondary)]">Select the algorithm, feed inputs, and fine-tune pacing before you launch.</p>
+            </div>
+            <div className="flex flex-wrap gap-2 text-xs text-[var(--color-text-secondary)]">
+              <span className="rounded-full border border-[var(--color-border-subtle)] px-3 py-1">Space = Play/Pause</span>
+              <span className="rounded-full border border-[var(--color-border-subtle)] px-3 py-1">← / → = Step</span>
+              <span className="rounded-full border border-[var(--color-border-subtle)] px-3 py-1">R = Restart</span>
+              <span className="rounded-full border border-[var(--color-border-subtle)] px-3 py-1">S = Stop</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-[var(--color-text-secondary)]">Algorithm</label>
+              <select
+                className="w-full rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-app)] px-4 py-3 text-[var(--color-text-primary)] shadow-inner"
+                value={effectiveAlgoId}
+                onChange={(e) => navigate(`/visualizer/${e.target.value}`)}
+              >
+                <optgroup label="Sorting Algorithms">
+                  <option value="bubble-sort">Bubble Sort</option>
+                  <option value="insertion-sort">Insertion Sort</option>
+                </optgroup>
+                <optgroup label="Graph Algorithms">
+                  <option value="bfs">Breadth-First Search (BFS)</option>
+                  <option value="dfs">Depth-First Search (DFS)</option>
+                </optgroup>
+                <optgroup label="OS Scheduling">
+                  <option value="round-robin">Round Robin</option>
+                  <option value="sjf">Shortest Job First (SJF)</option>
+                </optgroup>
+              </select>
+            </div>
+
+            {algorithm.categoryId === 'sorting' && (
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-[var(--color-text-secondary)]">Array Size: {arraySize}</label>
+                <input
+                  type="range"
+                  min="3"
+                  max="20"
+                  value={arraySize}
+                  onChange={(e) => setArraySize(parseInt(e.target.value))}
+                  className="h-2 w-full rounded-full bg-[var(--color-border-subtle)] accent-[var(--color-accent-primary)]"
+                />
               </div>
             )}
 
-            {activeTab === 'pseudocode' && (
-              <div>
-                <PseudoCodeBlock 
-                  code={(allPseudocode as Record<string, string>)[algoId || 'bubble-sort'] || '// Pseudo-code not available'}
-                  highlightedLine={currentStepData.pseudocodeLine}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-[var(--color-text-secondary)]">Step Delay: {speed}ms</label>
+              <input
+                type="range"
+                min="100"
+                max="2000"
+                step="100"
+                value={speed}
+                onChange={(e) => setSpeed(parseInt(e.target.value))}
+                className="h-2 w-full rounded-full bg-[var(--color-border-subtle)] accent-[var(--color-accent-secondary)]"
+              />
+            </div>
+
+            {algorithm.categoryId === 'sorting' && (
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-[var(--color-text-secondary)]">Custom Array (comma-separated)</label>
+                <input
+                  type="text"
+                  placeholder="e.g., 23, 5, 7, 1, 9"
+                  value={customInput}
+                  onChange={(e) => setCustomInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      initializeVisualization();
+                    }
+                  }}
+                  className="w-full rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-app)] px-4 py-3 text-[var(--color-text-primary)] shadow-inner placeholder:text-[var(--color-text-secondary)]"
                 />
               </div>
             )}
           </div>
-        )}
+
+          <div className="flex flex-wrap gap-3">
+            {!isPlaying ? (
+              <button
+                onClick={handleStart}
+                className="flex items-center gap-2 rounded-full bg-gradient-to-r from-[var(--color-accent-primary)] to-[var(--color-accent-secondary)] px-6 py-3 text-sm font-semibold text-[var(--color-text-on-primary)] shadow-lg transition-transform hover:-translate-y-0.5"
+              >
+                ▶ Start visualization
+              </button>
+            ) : (
+              <button
+                onClick={handlePause}
+                className="flex items-center gap-2 rounded-full bg-[var(--color-orange-500)] px-6 py-3 text-sm font-semibold text-[var(--color-text-on-primary)] shadow-md transition-transform hover:-translate-y-0.5"
+              >
+                ⏸ Pause
+              </button>
+            )}
+
+            <button
+              onClick={handleStop}
+              className="flex items-center gap-2 rounded-full border border-red-200 bg-red-50 px-6 py-3 text-sm font-semibold text-red-700 shadow-sm transition hover:-translate-y-0.5 hover:bg-red-100"
+            >
+              ⏹ Stop / Reset
+            </button>
+
+            <button
+              onClick={handlePrevious}
+              disabled={currentStep === 0}
+              className="flex items-center gap-2 rounded-full border border-[var(--color-border-subtle)] px-6 py-3 text-sm font-semibold text-[var(--color-text-primary)] shadow-sm transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              ◀ Previous
+            </button>
+
+            <button
+              onClick={handleNext}
+              disabled={currentStep === totalSteps - 1}
+              className="flex items-center gap-2 rounded-full border border-[var(--color-border-subtle)] px-6 py-3 text-sm font-semibold text-[var(--color-text-primary)] shadow-sm transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              Next ▶
+            </button>
+
+            <button
+              onClick={handleRestart}
+              className="flex items-center gap-2 rounded-full bg-[var(--color-accent-secondary)] px-6 py-3 text-sm font-semibold text-[var(--color-text-on-primary)] shadow-md transition-transform hover:-translate-y-0.5"
+            >
+              🔄 Restart
+            </button>
+          </div>
+        </section>
+
+        {/* Visualization */}
+        <section className="rounded-2xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] shadow-panel-strong p-6 space-y-5">
+          <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h3 className="text-xl font-semibold text-[var(--color-text-primary)]">Live visualization</h3>
+              <p className="text-sm text-[var(--color-text-secondary)]">A generous canvas keeps focus on the motion and balance of each step.</p>
+            </div>
+            {currentStepData?.metadata?.label && (
+              <span className="rounded-full bg-[var(--color-bg-chip)] px-4 py-2 text-sm font-semibold text-[var(--color-accent-primary)]">
+                {currentStepData.metadata.label}
+              </span>
+            )}
+          </div>
+
+          <div className="relative overflow-hidden rounded-2xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-app)]/80 shadow-inner">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(99,102,241,0.08),transparent_40%),_radial-gradient(circle_at_80%_10%,rgba(236,72,153,0.06),transparent_45%)]" />
+            <div className="relative flex items-center justify-center overflow-hidden rounded-2xl p-6 md:p-8">
+              {currentStepData ? (
+                <>
+                  {algorithm.categoryId === 'sorting' && <SortingBarsCanvas state={currentStepData.state} width={900} height={420} />}
+                  {algorithm.categoryId === 'graph' && <GraphCanvas state={currentStepData.state} width={900} height={520} />}
+                  {algorithm.categoryId === 'os' && <GanttChart state={currentStepData.state} />}
+                </>
+              ) : (
+                <p className="text-[var(--color-text-secondary)]">Initializing visualization...</p>
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* Step information */}
+        <section className="rounded-2xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] shadow-panel p-6 space-y-5">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h3 className="text-xl font-semibold text-[var(--color-text-primary)]">Step intelligence</h3>
+              <p className="text-sm text-[var(--color-text-secondary)]">Concise breakdowns, with optional telemetry and pseudo-code to stay grounded.</p>
+            </div>
+            <label className="flex items-center gap-2 text-sm text-[var(--color-text-secondary)]">
+              <input
+                type="checkbox"
+                checked={verboseMode}
+                onChange={(e) => setVerboseMode(e.target.checked)}
+                className="h-4 w-4 accent-[var(--color-accent-primary)]"
+              />
+              Verbose mode
+            </label>
+          </div>
+
+          <div className="flex flex-col gap-3 rounded-2xl bg-[var(--color-bg-app)]/80 p-4 shadow-inner md:flex-row md:items-center md:justify-between">
+            <div className="flex items-center gap-3">
+              <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--color-bg-pill)] text-base font-semibold text-[var(--color-accent-primary)]">
+                {currentStep + 1}
+              </span>
+              <div>
+                <p className="text-xs uppercase tracking-premium text-[var(--color-text-secondary)]">Step</p>
+                <p className="text-base font-semibold text-[var(--color-text-primary)]">{currentStep + 1} of {totalSteps || 1}</p>
+              </div>
+            </div>
+
+            {currentStepData?.metadata && (
+              <div className="flex flex-wrap gap-2 text-xs text-[var(--color-text-secondary)]">
+                {currentStepData.metadata.comparisons !== undefined && (
+                  <span className="rounded-full border border-[var(--color-border-subtle)] px-3 py-1">Comparisons: <strong className="text-[var(--color-text-primary)]">{currentStepData.metadata.comparisons}</strong></span>
+                )}
+                {currentStepData.metadata.swaps !== undefined && (
+                  <span className="rounded-full border border-[var(--color-border-subtle)] px-3 py-1">Swaps: <strong className="text-[var(--color-text-primary)]">{currentStepData.metadata.swaps}</strong></span>
+                )}
+              </div>
+            )}
+
+            <div className="h-2 w-full overflow-hidden rounded-full bg-[var(--color-border-subtle)] md:max-w-xs">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-[var(--color-accent-primary)] via-[var(--color-accent-secondary)] to-[var(--color-accent-primary)] transition-all"
+                style={{ width: `${progressPercent}%` }}
+              ></div>
+            </div>
+          </div>
+
+          {currentStepData && (
+            <div className="space-y-5">
+              <div className="flex flex-wrap gap-3 text-sm text-[var(--color-text-secondary)]">
+                <button
+                  className={`rounded-full px-4 py-2 font-semibold shadow-sm transition ${
+                    activeTab === 'explanation'
+                      ? 'bg-[var(--color-accent-primary)]/15 text-[var(--color-text-primary)]'
+                      : 'border border-[var(--color-border-subtle)]'
+                  }`}
+                  onClick={() => setActiveTab('explanation')}
+                >
+                  Explanation
+                </button>
+                <button
+                  className={`rounded-full px-4 py-2 font-semibold shadow-sm transition ${
+                    activeTab === 'pseudocode'
+                      ? 'bg-[var(--color-accent-primary)]/15 text-[var(--color-text-primary)]'
+                      : 'border border-[var(--color-border-subtle)]'
+                  }`}
+                  onClick={() => setActiveTab('pseudocode')}
+                >
+                  Pseudo-code
+                </button>
+              </div>
+
+              {activeTab === 'explanation' && (
+                <div className="grid gap-5 md:grid-cols-2">
+                  <div className="space-y-4 rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-app)] p-5 shadow-inner">
+                    <div className="flex items-center gap-2 text-sm font-semibold text-[var(--color-text-secondary)]">
+                      <span className="h-1.5 w-8 rounded-full bg-[var(--color-accent-primary)]"></span>
+                      Description
+                    </div>
+                    <p className="text-[var(--color-text-primary)] leading-relaxed">{currentStepData.description}</p>
+                    {verboseMode &&
+                      algorithm.categoryId === 'sorting' &&
+                      currentStepData.state &&
+                      'array' in currentStepData.state &&
+                      Array.isArray((currentStepData.state as { array: unknown }).array) && (
+                      <div className="rounded-lg bg-[var(--color-bg-chip)] px-3 py-3 text-sm text-[var(--color-text-secondary)]">
+                        <p className="font-semibold text-[var(--color-text-primary)]">State snapshot</p>
+                        {(() => {
+                          const { array, comparing } = currentStepData.state as {
+                            array: number[];
+                            comparing?: [number, number];
+                          };
+                          return (
+                            <>
+                              <p className="mt-1">[{array.join(', ')}]</p>
+                              {comparing && (
+                                <p className="mt-1">Comparing indices: {comparing[0]} and {comparing[1]}</p>
+                              )}
+                            </>
+                          );
+                        })()}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="space-y-4 rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-app)] p-5 shadow-inner">
+                    <div className="flex items-center gap-2 text-sm font-semibold text-[var(--color-text-secondary)]">
+                      <span className="h-1.5 w-8 rounded-full bg-[var(--color-accent-secondary)]"></span>
+                      Rationale
+                    </div>
+                    <p className="text-[var(--color-text-primary)] italic leading-relaxed">{currentStepData.reason || 'Following the algorithm sequence.'}</p>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'pseudocode' && (
+                <div className="rounded-xl border border-[var(--color-border-subtle)] bg-[var(--color-bg-app)] p-5 shadow-inner">
+                  <PseudoCodeBlock
+                    code={(allPseudocode as Record<string, string>)[effectiveAlgoId] || '// Pseudo-code not available'}
+                    highlightedLine={currentStepData.pseudocodeLine}
+                  />
+                </div>
+              )}
+            </div>
+          )}
+        </section>
       </div>
     </div>
   );
