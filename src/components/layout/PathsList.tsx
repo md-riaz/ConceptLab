@@ -104,6 +104,11 @@ export default function PathsList() {
                   <div 
                     className="w-full rounded-full h-2 mb-2"
                     style={{ backgroundColor: 'var(--color-gray-200)' }}
+                    role="progressbar"
+                    aria-valuenow={progress}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    aria-label={`Learning path progress: ${progress}% complete`}
                   >
                     <div
                       className="h-2 rounded-full transition-all duration-500"

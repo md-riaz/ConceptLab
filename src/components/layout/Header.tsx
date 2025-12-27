@@ -45,23 +45,7 @@ export default function Header() {
               <Link 
                 key={link.path}
                 to={link.path} 
-                className="relative px-4 py-2 rounded-lg text-sm font-medium no-underline transition-all duration-200"
-                style={{ 
-                  color: isActive(link.path) ? 'var(--color-accent-primary)' : 'var(--color-text-secondary)',
-                  backgroundColor: isActive(link.path) ? 'var(--color-primary-100)' : 'transparent',
-                }}
-                onMouseEnter={(e) => {
-                  if (!isActive(link.path)) {
-                    e.currentTarget.style.backgroundColor = 'var(--color-gray-100)';
-                    e.currentTarget.style.color = 'var(--color-text-primary)';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!isActive(link.path)) {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.color = 'var(--color-text-secondary)';
-                  }
-                }}
+                className={`nav-link relative px-4 py-2 rounded-lg text-sm font-medium no-underline ${isActive(link.path) ? 'active' : ''}`}
               >
                 {link.label}
               </Link>

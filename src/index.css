@@ -161,6 +161,38 @@ a.no-underline:hover {
   text-decoration: none;
 }
 
+/* Navigation link styles */
+.nav-link {
+  color: var(--color-text-secondary);
+  background-color: transparent;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.nav-link:hover {
+  color: var(--color-text-primary);
+  background-color: var(--color-gray-100);
+}
+
+.nav-link.active {
+  color: var(--color-accent-primary);
+  background-color: var(--color-primary-100);
+}
+
+.nav-link.active:hover {
+  color: var(--color-accent-primary);
+  background-color: var(--color-primary-100);
+}
+
+/* Footer link styles */
+.footer-link {
+  color: var(--color-text-secondary);
+  transition: color 0.2s ease;
+}
+
+.footer-link:hover {
+  color: var(--color-accent-primary);
+}
+
 /* Typography utility classes */
 @layer utilities {
   .h1 {

@@ -40,10 +40,7 @@ export default function Footer() {
                 <Link 
                   key={link.to}
                   to={link.to}
-                  className="text-sm no-underline transition-colors hover:underline"
-                  style={{ color: 'var(--color-text-secondary)' }}
-                  onMouseEnter={(e) => e.currentTarget.style.color = 'var(--color-accent-primary)'}
-                  onMouseLeave={(e) => e.currentTarget.style.color = 'var(--color-text-secondary)'}
+                  className="footer-link text-sm no-underline"
                 >
                   {link.label}
                 </Link>
