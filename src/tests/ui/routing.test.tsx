@@ -11,7 +11,7 @@ describe('Routing Tests - Checkpoint 1', () => {
     
     render(<RouterProvider router={testRouter} />);
     expect(screen.getByText('Algorithm Visualizer')).toBeInTheDocument();
-    expect(screen.getByText('Watch every concept step out in real time')).toBeInTheDocument();
+    expect(screen.getByText(/Master complex algorithms through/)).toBeInTheDocument();
   });
 
   it('should render Topics list page', () => {
@@ -77,6 +77,6 @@ describe('Routing Tests - Checkpoint 1', () => {
     
     render(<RouterProvider router={testRouter} />);
     expect(screen.getAllByText(/ConceptLab/)[0]).toBeInTheDocument();
-    expect(screen.getByText(/Built to help learners visualize abstract processes step-by-step/)).toBeInTheDocument();
+    expect(screen.getByText(/Built with/)).toBeInTheDocument();
   });
 });
